@@ -1,0 +1,9 @@
+# User files
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/*.iws
+
+# Generated from .ts
+js/app.js*
+js/JumperCube*
+js/Jv.Games.WebGL*
