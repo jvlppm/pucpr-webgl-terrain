@@ -23,6 +23,7 @@ module Jv.Games.WebGL.Materials {
                 this.setUniform(name, this.uniforms[name]);
         }
 
+        setUniform(name: string, value: boolean);
         setUniform(name: string, value: Color);
         setUniform(name: string, value: Matrix4);
         setUniform(name: string, value: Texture);
@@ -46,7 +47,13 @@ module Jv.Games.WebGL.Materials {
                 return;
             }
 
-            throw new Error("Uniform type not supported");
+            switch (typeof value) {
+                case "boolean":
+                    this.program.getUniform(name).setInt(value? 1 : 0);
+                    return;
+                default:
+                    throw new Error("Uniform type not supported");
+            }
         }
 
         static initAll(context: WebGLRenderingContext, materials: { materialProgram: Core.ShaderProgram; new (...args: any[]) }[]) {
