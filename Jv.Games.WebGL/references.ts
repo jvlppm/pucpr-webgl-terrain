@@ -14,6 +14,9 @@
 
 ///<reference path="Materials/DirectionalLight.ts" />
 ///<reference path="Materials/Material.ts" />
+///<reference path="Materials/TextureMaterial.ts" />
+///<reference path="Materials/VertexColorMaterial.ts" />
+///<reference path="Materials/SolidColorMaterial.ts" />
 ///<reference path="Materials/Texture.ts" />
 
 ///<reference path="Components/Component.ts" />
