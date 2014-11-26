@@ -50,6 +50,7 @@ module Jv.Games.WebGL {
         }
 
         draw(material: Materials.Material) {
+            material.program.use();
             var gl = this.context;
             for (var i = 0; i < this.buffers.length; i++)
                 this.buffers[i].setAttributes(material);

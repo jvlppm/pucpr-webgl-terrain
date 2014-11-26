@@ -111,7 +111,7 @@ module JumperCube.Models {
         private addHead() {
             var marioHeadMesh = <{ [prop: string]: any }>{
                 mesh: new JumperCube.Mesh.MarioHead(this.context),
-                material: new Jv.Games.WebGL.Materials.TextureMaterial(this.texture)
+                material: new JumperCube.Materials.TextureMaterial(this.texture)
             };
 
             var head = this.body.add(new GameObject());
@@ -123,7 +123,7 @@ module JumperCube.Models {
         private addCap() {
             var marioCapMesh = <{ [prop: string]: any }>{
                 mesh: new JumperCube.Mesh.Cube(0.95, 0.01, 0.3, this.context, Mario.CapUV, Mario.CapUV, Mario.CapUV, Mario.CapUV, Mario.CapUV, Mario.CapUV),
-                material: new Jv.Games.WebGL.Materials.TextureMaterial(this.texture)
+                material: new JumperCube.Materials.TextureMaterial(this.texture)
             };
 
             var cap = this.body.add(new GameObject());
@@ -139,7 +139,7 @@ module JumperCube.Models {
                     Mario.BodyFrontUV, Mario.BodyBackUV,
                     Mario.BodyLeftUV, Mario.BodyRightUV,
                     Mario.BodyTopUV, Mario.BodyBottomUV),
-                material: new Jv.Games.WebGL.Materials.TextureMaterial(this.texture)
+                material: new JumperCube.Materials.TextureMaterial(this.texture)
             };
 
             var chest = this.body.add(new GameObject());
@@ -153,7 +153,7 @@ module JumperCube.Models {
                     Mario.ArmFrontUV, Mario.ArmBackUV,
                     Mario.ArmLeftUV, Mario.ArmRightUV,
                     Mario.ArmTopUV, Mario.ArmBottomUV),
-                material: new Jv.Games.WebGL.Materials.TextureMaterial(this.texture)
+                material: new JumperCube.Materials.TextureMaterial(this.texture)
             };
 
             var container = this.body.add(new GameObject());
@@ -170,7 +170,7 @@ module JumperCube.Models {
                     Mario.LegFrontUV, Mario.LegBackUV,
                     Mario.LegLeftUV, Mario.LegRightUV,
                     Mario.LegTopUV, Mario.LegBottomUV),
-                material: new Jv.Games.WebGL.Materials.TextureMaterial(this.texture)
+                material: new JumperCube.Materials.TextureMaterial(this.texture)
             };
 
             var container = this.body.add(new GameObject());

@@ -105,26 +105,18 @@ module Jv.Games.WebGL {
                         if (typeof (<any>components[i]).draw === "function") {
 
                             var material = (<MeshRenderer>components[i]).material;
-                            if (typeof material !== "undefined" && materials.indexOf(material) < 0) {
-
-                                material.setUniform("Pmatrix", cam.projection);
-                                material.setUniform("Vmatrix", cam.view);
-
-                                if (typeof this.ambientLight !== "undefined")
-                                    material.setUniform("ambientLight", this.ambientLight);
-                                if (typeof this.mainLight !== "undefined") {
-                                    material.setUniform("directionalLightColor", this.mainLight.color);
-                                    material.setUniform("directionalVector", this.mainLight.direction);
+                            if (typeof material !== "undefined") {
+                                if(materials.indexOf(material) < 0) {
+                                    material.setWorld(this, cam);
+                                    materials.push(material);
                                 }
-
-                                materials.push(material);
+                                material.setModel(obj);
                             }
-
                             (<any>components[i]).draw();
                         }
                     }
-                };
-            };
+                }
+            }
 
             gl.flush();
         }

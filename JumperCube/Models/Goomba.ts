@@ -26,7 +26,7 @@ module JumperCube.Models {
                 .add(Behaviors.SwingWhileMoving, { axis: new Vector3(0, 0, 1), speed: 15, maxSwing: 0.2 })
                 .add(MeshRenderer, {
                     mesh: new JumperCube.Mesh.Cube(1, 1, 1, context, Goomba.FrontUV, Goomba.BackUV, Goomba.LeftUV, Goomba.RightUV, Goomba.TopUV, Goomba.BottomUV),
-                    material: new Jv.Games.WebGL.Materials.TextureMaterial(texture)
+                    material: new JumperCube.Materials.TextureMaterial(texture)
                 });
 
             //perspectiveContainer.transform._rotateX(-0.6);

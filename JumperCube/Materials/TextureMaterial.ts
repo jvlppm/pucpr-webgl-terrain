@@ -1,8 +1,10 @@
 ///<reference path="../references.ts" />
 
-module Jv.Games.WebGL.Materials {
-    export class TextureMaterial extends Material {
-        static materialProgram: Core.ShaderProgram;
+module JumperCube.Materials {
+    import Texture = Jv.Games.WebGL.Materials.Texture;
+
+    export class TextureMaterial extends SimpleMaterial {
+        static materialProgram: Jv.Games.WebGL.Core.ShaderProgram;
 
         uniforms: { uSampler: Texture };
 

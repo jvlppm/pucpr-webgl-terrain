@@ -1,8 +1,10 @@
 ///<reference path="../references.ts" />
 
-module Jv.Games.WebGL.Materials {
-    export class SolidColorMaterial extends Material {
-        static materialProgram: Core.ShaderProgram;
+module JumperCube.Materials {
+    import Color = Jv.Games.WebGL.Color;
+
+    export class SolidColorMaterial extends SimpleMaterial {
+        static materialProgram: Jv.Games.WebGL.Core.ShaderProgram;
 
         uniforms: { vColor: Color };
 

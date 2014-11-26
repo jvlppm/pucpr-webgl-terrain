@@ -22,6 +22,11 @@
 ///<reference path="Mesh/MarioHead.ts" />
 ///<reference path="Mesh/Terrain.ts" />
 
+///<reference path="Materials/SimpleMaterial.ts" />
+///<reference path="Materials/SolidColorMaterial.ts" />
+///<reference path="Materials/TextureMaterial.ts" />
+///<reference path="Materials/VertexColorMaterial.ts" />
+
 ///<reference path="Models/BrickBlock.ts" />
 ///<reference path="Models/Goomba.ts" />
 ///<reference path="Models/ItemBlock.ts" />

@@ -4,7 +4,7 @@ module JumperCube.Models {
     import GameObject = Jv.Games.WebGL.GameObject;
     import MeshRenderer = Jv.Games.WebGL.Components.MeshRenderer;
     import Texture = Jv.Games.WebGL.Materials.Texture;
-    import TextureMaterial = Jv.Games.WebGL.Materials.TextureMaterial;
+    import TextureMaterial = JumperCube.Materials.TextureMaterial;
     import Vector3 = Jv.Games.WebGL.Vector3;
 
     export class Mushroom extends GameObject {
@@ -32,7 +32,7 @@ module JumperCube.Models {
                     Mushroom.HeadFrontUV, Mushroom.HeadBackUV,
                     Mushroom.HeadLeftUV, Mushroom.HeadRightUV,
                     Mushroom.HeadTopUV, Mushroom.HeadBottomUV),
-                material: new Jv.Games.WebGL.Materials.TextureMaterial(texture)
+                material: new TextureMaterial(texture)
             });
             head.transform.y = 0.05;
 
@@ -42,7 +42,7 @@ module JumperCube.Models {
                     Mushroom.BodyFrontUV, Mushroom.BodyBackUV,
                     Mushroom.BodyLeftUV, Mushroom.BodyRightUV,
                     Mushroom.BodyTopUV, Mushroom.BodyBottomUV),
-                material: new Jv.Games.WebGL.Materials.TextureMaterial(texture)
+                material: new TextureMaterial(texture)
             });
             body.transform.y = -0.2;
 

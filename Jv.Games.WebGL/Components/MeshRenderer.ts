@@ -11,14 +11,11 @@ module Jv.Games.WebGL.Components {
 
             if (typeof this.mesh === "undefined")
                 throw new Error("No mesh specified for MeshRenderer");
-            this.material = this.material || new Jv.Games.WebGL.Materials.VertexColorMaterial();
+            if (typeof this.material === "undefined")
+                throw new Error("No material specified for MeshRenderer");
         }
 
         draw() {
-            this.material.program.use();
-            this.material.setUniform("Mmatrix", this.object.globalTransform);
-            this.material.setUniform("Nmatrix", this.object.globalTransform.invert().transpose());
-            this.material.setUniforms();
             this.mesh.draw(this.material);
         }
     }

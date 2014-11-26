@@ -4,7 +4,7 @@ module JumperCube.Models {
     import MeshRenderer = Jv.Games.WebGL.Components.MeshRenderer;
     import Texture = Jv.Games.WebGL.Materials.Texture;
     import RigidBody = Jv.Games.WebGL.Components.RigidBody;
-    import TextureMaterial = Jv.Games.WebGL.Materials.TextureMaterial;
+    import TextureMaterial = JumperCube.Materials.TextureMaterial;
     import AxisAlignedBoxCollider = Jv.Games.WebGL.Components.AxisAlignedBoxCollider;
     import GameObject = Jv.Games.WebGL.GameObject;
     import Vector3 = Jv.Games.WebGL.Vector3;

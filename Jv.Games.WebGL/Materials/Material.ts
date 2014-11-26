@@ -11,6 +11,13 @@ module Jv.Games.WebGL.Materials {
 
         uniforms: {};
 
+        setWorld(scene: Jv.Games.WebGL.Scene, cam: Jv.Games.WebGL.Camera) {
+        }
+
+        setModel(object: Jv.Games.WebGL.GameObject) {
+            this.setUniforms();
+        }
+
         setUniforms() {
             for (var name in this.uniforms)
                 this.setUniform(name, this.uniforms[name]);
@@ -42,15 +49,11 @@ module Jv.Games.WebGL.Materials {
             throw new Error("Uniform type not supported");
         }
 
-        static initAll(context: WebGLRenderingContext) {
-            return Promise.all([
-                Material.initShader(context, SolidColorMaterial),
-                Material.initShader(context, VertexColorMaterial),
-                Material.initShader(context, TextureMaterial)
-            ]);
+        static initAll(context: WebGLRenderingContext, materials: { materialProgram: Core.ShaderProgram; new (...args: any[]) }[]) {
+            return Promise.all(materials.map(m => Material.initShader(context, m)));
         }
 
-        static initShader<Type extends Material>(context: WebGLRenderingContext, material: { materialProgram: Core.ShaderProgram; new (...args: any[]): Type }) {
+        static initShader<Type extends Material>(context: WebGLRenderingContext, material: { materialProgram: Core.ShaderProgram; new (...args: any[]) }) {
             var name = Material.GetName(material);
 
             var program: Core.ShaderProgram = new Core.ShaderProgram(context);
