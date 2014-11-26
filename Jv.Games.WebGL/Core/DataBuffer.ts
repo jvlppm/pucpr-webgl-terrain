@@ -11,6 +11,7 @@ module Jv.Games.WebGL.Core {
     export class DataBuffer {
         buffer: WebGLBuffer;
         attributes: BufferAttribute[];
+        size: number;
 
         constructor(public context: WebGLRenderingContext, public stride: number, public dataType: DataType) {
             this.attributes = [];
@@ -18,6 +19,7 @@ module Jv.Games.WebGL.Core {
         }
 
         set data(data: number[]) {
+            this.size = data.length;
             var bufferContent;
             switch (this.dataType) {
                 case Core.DataType.Float:
@@ -35,8 +37,11 @@ module Jv.Games.WebGL.Core {
             gl.bufferData(gl.ARRAY_BUFFER, bufferContent, gl.STATIC_DRAW);
         }
 
-        attrib(name: string, size: number, normalized: boolean, offset: number) {
-            this.attributes.push(new BufferAttribute(name, size, null, normalized, null, offset));
+        attrib(name: string);
+        attrib(name: string, size: number, normalized: boolean, offset: number);
+        attrib(name: string, size?: number, normalized?: boolean, offset?: number)
+        {
+            this.attributes.push(new BufferAttribute(name, size || this.size, null, normalized || false, null, offset || 0));
             return this;
         }
 

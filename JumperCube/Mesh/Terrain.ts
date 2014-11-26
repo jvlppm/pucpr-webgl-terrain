@@ -5,98 +5,167 @@ module JumperCube.Mesh {
     import DataBuffer = Jv.Games.WebGL.Core.DataBuffer;
     import DataType = Jv.Games.WebGL.Core.DataType;
 
+    interface TerrainData {
+        vertices: number[];
+        maxHeight: number;
+        texCoord: number[];
+        texWeights: number[];
+        normals: number[];
+        indices: number[];
+    }
+
     export class Terrain extends WebGL.Mesh {
-        constructor(context: WebGLRenderingContext, heightMap?: ImageData, scale = 1, width?: number, height?: number) {
+        constructor(context: WebGLRenderingContext, heightMap?: ImageData, scale = 1) {
             super(context, WebGL.MeshRenderMode.Triangles);
 
-            var width = width || heightMap.width;
-            var depth = height || heightMap.height;
+            var data = Terrain.createData(heightMap, scale);
 
-            // Data
-            var data = this.setupVertices(depth, width, data, scale);
-            // Indices
-            var indices = this.setupIndices(depth, width);
-            // Normals
-            this.setupNormals(depth, width, indices, data);
+            this.addBuffer(data.vertices, DataType.Float, 3)
+                .attrib("aVertexPosition");
+            this.addBuffer(data.normals, DataType.Float, 3)
+                .attrib("aVertexNormal");
+            this.addBuffer(data.texCoord, DataType.Float, 2)
+                .attrib("aTexCoord");
+            this.addBuffer(data.texWeights, DataType.Float, 4)
+                .attrib("aTexWeight");
+
+            this.index = data.indices;
         }
 
-        private setupVertices(depth, width, heightMap?: ImageData, scale = 1) {
-            var hw = (width - 1) / 2;
-            var hd = (depth - 1) / 2;
+        //region Helpers
+        private static calcLinear(min: number, max: number, value: number, inverse: boolean) {
+            var range = max - min;
+            var result = (value - min) / range;
+            result = result < 0 ? 0 : (result > 1 ? 1 : result);
+            return inverse ? 1 - result : result;
+        }
 
-            var xRatio: number;
-            var yRatio: number;
-            if(typeof heightMap !== "undefined") {
-                xRatio = heightMap.width / width;
-                yRatio = heightMap.height / depth;
-            }
+        private static calcPiramid(min: number, max: number, value: number) {
+            var mid = (min + max) / 2;
+            return value <= mid ?
+                Terrain.calcLinear(min, mid, value, false) :
+                Terrain.calcLinear(mid, max, value, true);
+        }
 
-            var data:number[] = [];
+        private static smooth(data: TerrainData, width, depth) {
+            data.maxHeight = 0;
             for (var z = 0; z < depth; z++) {
                 for (var x = 0; x < width; x++) {
-                    var posV = (x + z * width) * 5;
-                    data[posV + 0] = x - hw;
-                    data[posV + 1] = (typeof heightMap === "undefined"? 0 : imp.getRGB(heightMap, x * xRatio, z * yRatio))[0] * scale;
-                    data[posV + 2] = z - hd;
+                    var sum = 0;
+                    var count = 0;
 
-                    data[posV + 3] = x / width;
-                    data[posV + 4] = z / depth;
+                    for (var j = -1; j < 2; j++) {
+                        for (var i = -1; i < 2; i++) {
+                            var px = x - i;
+                            var pz = z - j;
+                            if (px < 0 || px > width ||
+                                pz < 0 || pz > depth) {
+                                continue;
+                            }
+                            var posPy = ((px + pz * width)*3)+1;
+                            sum += data.vertices[posPy];
+                            count++;
+                        }
+                    }
+
+                    //Soma os dois resultados
+                    var posVy = ((x + z * width)*3)+1;
+                    var height = sum / count;
+                    data.vertices[posVy] = height;
+                    if (height > data.maxHeight) {
+                        data.maxHeight = height;
+                    }
+                }
+            }
+        }
+
+        private static createData(img: ImageData, scale?: number, smoothness?: number): TerrainData {
+            var data: TerrainData = {
+                maxHeight: 0,
+                vertices: [],
+                texCoord: [],
+                texWeights: [],
+                normals: [],
+                indices: []
+            };
+
+            var normals: vec3[];
+
+            //***** Criação do vértices *****
+            scale = scale || 0.5;
+            smoothness = smoothness || 1;
+
+            var width = img.width;
+            var depth = img.height;
+
+            var hw = (width-1) / 2;
+            var hd = (depth-1) / 2;
+
+            for (var z = 0; z < depth; z++) {
+                for (var x = 0; x < width; x++) {
+                    var posV = (x + z * width)*3;
+                    data.vertices[posV+0] = x - hw;
+                    data.vertices[posV+1] = imp.getRGB(img, x, z)[0] * scale;
+                    data.vertices[posV+2] = z - hd;
+
+                    normals[x + z * width] = vec3.create();
+
+                    var posT = (x + z * width)*2;
+                    data.texCoord[posT+0] = x / width;
+                    data.texCoord[posT+1] = z / depth;
                 }
             }
 
-            this.addBuffer(data, DataType.Float, 5)
-                .attrib("position", 3, false, 0)
-                .attrib("textureCoord", 2, false, 3);
+            for (var s = 0; s < smoothness; s++) {
+                Terrain.smooth(data, width, depth);
+            }
 
-            return data;
-        }
+            //***** Criação dos pesos *****/
+            for (z = 0; z < depth; z++) {
+                for (x = 0; x < width; x++) {
+                    var height = data.vertices[(x + z * width)*3+1];
+                    var posV = (x + z * width)*4;
 
-        private setupIndices(depth, width) {
-            var indices: number[] = [];
-            for (var z = 0; z < depth - 1; z++) {
-                for (var x = 0; x < width - 1; x++) {
+                    //Calcula de acordo com a altura
+                    var hPercent = height / data.maxHeight;
+                    data.texWeights[posV+0] = Terrain.calcLinear(0.85, 1.00, hPercent, false);
+                    data.texWeights[posV+1] = Terrain.calcPiramid(0.60, 0.90, hPercent);
+                    data.texWeights[posV+2] = Terrain.calcPiramid(0.20, 0.70, hPercent);
+                    data.texWeights[posV+3] = Terrain.calcLinear(0.00, 0.25, hPercent, true);
+                }
+            }
+            //***** Criação dos índices *****
+            data.indices = [];
+
+            for (z = 0; z < depth - 1; z++) {
+                for (x = 0; x < width - 1; x++) {
                     var zero = x + z * width;
                     var one = (x + 1) + z * width;
                     var two = x + (z + 1) * width;
                     var three = (x + 1) + (z + 1) * width;
 
-                    indices.push(one);
-                    indices.push(zero);
-                    indices.push(three);
+                    data.indices.push(one);
+                    data.indices.push(zero);
+                    data.indices.push(three);
 
-                    indices.push(three);
-                    indices.push(zero);
-                    indices.push(two);
+                    data.indices.push(three);
+                    data.indices.push(zero);
+                    data.indices.push(two);
                 }
             }
-            this.index = indices;
-            return indices;
-        }
 
-        private setupNormals(depth, width, indices, data) {
-            var normals:vec3[] = [];
+            //***** Criação das normais *****
+            for (var i = 0; i < data.indices.length / 3; i++) {
+                var i1 = data.indices[i * 3 + 0];
+                var i2 = data.indices[i * 3 + 1];
+                var i3 = data.indices[i * 3 + 2];
 
-            for (var z = 0; z < depth; z++)
-                for (var x = 0; x < width; x++)
-                    normals[x + z * width] = vec3.create();
-
-            for (var i = 0; i < indices.length / 3; i++) {
-                var i1 = indices[i * 3 + 0];
-                var i2 = indices[i * 3 + 1];
-                var i3 = indices[i * 3 + 2];
-
-                var v1 = vec3.fromValues(
-                    data[i1 * 5 + 0],
-                    data[i1 * 5 + 1],
-                    data[i1 * 5 + 2]);
-                var v2 = vec3.fromValues(
-                    data[i2 * 5 + 0],
-                    data[i2 * 5 + 1],
-                    data[i2 * 5 + 2]);
-                var v3 = vec3.fromValues(
-                    data[i3 * 5 + 0],
-                    data[i3 * 5 + 1],
-                    data[i3 * 5 + 2]);
+                var v1 = vec3.fromValues(data.vertices[i1*3+0],
+                    data.vertices[i1*3+1], data.vertices[i1*3+2]);
+                var v2 = vec3.fromValues(data.vertices[i2*3+0],
+                    data.vertices[i2*3+1], data.vertices[i2*3+2]);
+                var v3 = vec3.fromValues(data.vertices[i3*3+0],
+                    data.vertices[i3*3+1], data.vertices[i3*3+2]);
 
                 var side1 = vec3.subtract(vec3.create(), v2, v1);
                 var side2 = vec3.subtract(vec3.create(), v3, v1);
@@ -110,19 +179,18 @@ module JumperCube.Mesh {
             }
 
             //Normalizamos tudo para obter a média das normais
-            for (i = 0; i < width * depth; i++)
+            for (i = 0; i < width*depth; i++)
                 vec3.normalize(normals[i], normals[i]);
 
             //Copiamos as normais para o array data.normals
-            var normalsBuffer = [];
-            for (i = 0; i < width * depth; i++) {
-                normalsBuffer[i * 3 + 0] = normals[i][0];
-                normalsBuffer[i * 3 + 1] = normals[i][1];
-                normalsBuffer[i * 3 + 2] = normals[i][2];
+            for (i = 0; i < width*depth; i++) {
+                data.normals[i*3+0] = data.normals[i][0];
+                data.normals[i*3+1] = data.normals[i][1];
+                data.normals[i*3+2] = data.normals[i][2];
             }
 
-            this.addBuffer(normalsBuffer, DataType.Float, 3)
-                .attrib("normal", 3, false, 0);
+            return data;
         }
+        //endregion
     }
 }
