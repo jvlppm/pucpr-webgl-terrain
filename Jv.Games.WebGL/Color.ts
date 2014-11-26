@@ -21,7 +21,7 @@ module Jv.Games.WebGL {
             return color;
         }
 
-        get red() {
+        get red(): number {
             return this.data[this.startIndex];
         }
 
@@ -29,7 +29,7 @@ module Jv.Games.WebGL {
             this.data[this.startIndex] = value;
         }
 
-        get green() {
+        get green(): number {
             return this.data[this.startIndex + 1];
         }
 
@@ -37,7 +37,7 @@ module Jv.Games.WebGL {
             this.data[this.startIndex + 1] = value;
         }
 
-        get blue() {
+        get blue(): number {
             return this.data[this.startIndex + 2];
         }
 
@@ -45,7 +45,7 @@ module Jv.Games.WebGL {
             this.data[this.startIndex + 2] = value;
         }
 
-        get alpha() {
+        get alpha(): number {
             if (this.hasAlphaChannel)
                 return this.data[this.startIndex + 3];
         }
