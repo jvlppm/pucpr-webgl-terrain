@@ -1,4 +1,5 @@
-﻿///<reference path="../Jv.Games.WebGL/references.ts" />
+﻿///<reference path="../Definitions/imp.d.ts" />
+///<reference path="../Jv.Games.WebGL/references.ts" />
 
 ///<reference path="Trigger.ts" />
 
@@ -19,6 +20,7 @@
 
 ///<reference path="Mesh/Cube.ts" />
 ///<reference path="Mesh/MarioHead.ts" />
+///<reference path="Mesh/Terrain.ts" />
 
 ///<reference path="Models/BrickBlock.ts" />
 ///<reference path="Models/Goomba.ts" />

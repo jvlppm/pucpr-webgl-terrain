@@ -82,7 +82,7 @@ module JumperCube.Mesh {
                 0, 1, 0,
                 -w, h, -d,
                 0, 1, 0,
-            ], DataType.Float, 4 * 6);
+            ], DataType.Float, 6);
 
             data.attrib("position", 3, false, 0);
             data.attrib("color", 3, false, 3);
@@ -123,7 +123,7 @@ module JumperCube.Mesh {
                 -1.0, 0.0, 0.0,
                 -1.0, 0.0, 0.0,
                 -1.0, 0.0, 0.0
-            ], Jv.Games.WebGL.Core.DataType.Float, 3 * 4);
+            ], Jv.Games.WebGL.Core.DataType.Float, 3);
             normalData.attrib("normal", 3, false, 0);
 
             var textureData = this.addBuffer([
@@ -163,7 +163,7 @@ module JumperCube.Mesh {
                 leftUV[4], leftUV[5],
                 leftUV[6], leftUV[7],
 
-            ], DataType.Float, 4 * 2);
+            ], DataType.Float, 2);
 
             textureData.attrib("textureCoord", 2, false, 0);
 

@@ -37,6 +37,7 @@ module Jv.Games.WebGL.Core {
 
         attrib(name: string, size: number, normalized: boolean, offset: number) {
             this.attributes.push(new BufferAttribute(name, size, null, normalized, null, offset));
+            return this;
         }
 
         setAttributes(material: Materials.Material) {

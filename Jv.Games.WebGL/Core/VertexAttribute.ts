@@ -10,6 +10,23 @@ module Jv.Games.WebGL.Core {
 		Float
     }
 
+    export function sizeof(dataType: DataType) {
+        switch (dataType) {
+            case Core.DataType.UnsignedByte:
+            case Core.DataType.Byte:
+                return 1;
+            case Core.DataType.Short:
+            case Core.DataType.UnsignedShort:
+                return 2;
+            case Core.DataType.Fixed:
+            case Core.DataType.Float:
+                return 4;
+
+            default:
+                throw new Error("Buffer of " + Core.DataType[dataType] + " is not supported yet.");
+        }
+    }
+
     export class VertexAttribute {
         context: WebGLRenderingContext;
         program: WebGLProgram;

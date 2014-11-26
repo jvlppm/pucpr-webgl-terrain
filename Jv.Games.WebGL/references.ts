@@ -1,5 +1,6 @@
-﻿///<reference path="../jquery.d.ts" />
-///<reference path="../es6-promise.d.ts" />
+﻿///<reference path="../Definitions/jquery.d.ts" />
+///<reference path="../Definitions/es6-promise.d.ts" />
+///<reference path="../Definitions/gl-matrix.d.ts" />
 
 ///<reference path="Vector3.ts" />
 ///<reference path="Matrix4.ts" />

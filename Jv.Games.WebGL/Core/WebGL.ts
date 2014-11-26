@@ -18,8 +18,10 @@ module Jv.Games.WebGL.Core {
         private static getWebGLContext(canvas: HTMLCanvasElement) {
             var context: WebGLRenderingContext;
             var contextName = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
-            for (var i = 0; i < contextName.length && context == null; i++)
+            for (var i = 0; i < contextName.length && !context; i++)
                 context = <WebGLRenderingContext>canvas.getContext(contextName[i], { antialias: false, alpha: false });
+            if (!context)
+                throw new Error("WebGL context not found!");
             return context;
         }
     }

@@ -45,7 +45,7 @@ module JumperCube.Mesh {
                 -1.0, -1.0, 1.0,
                 -1.0, 1.0, 1.0,
                 -1.0, 0.6, -1.0,
-            ].map(i => i / 2.1), DataType.Float, 4 * 3);
+            ].map(i => i / 2.1), DataType.Float, 3);
 
             data.attrib("position", 3, false, 0);
 
@@ -86,7 +86,7 @@ module JumperCube.Mesh {
                 0.701497572842308, 0.554489376285127,
                 0.510656121640699, 0.683002056202879,
 
-            ], DataType.Float, 4 * 2);
+            ], DataType.Float, 2);
 
             textureData.attrib("textureCoord", 2, false, 0);
 
@@ -126,7 +126,7 @@ module JumperCube.Mesh {
                 -1.0, 0.0, 0.0,
                 -1.0, 0.0, 0.0,
                 -1.0, 0.0, 0.0
-            ], Jv.Games.WebGL.Core.DataType.Float, 3 * 4);
+            ], Jv.Games.WebGL.Core.DataType.Float, 3);
             normalData.attrib("normal", 3, false, 0);
 
             this.index = [

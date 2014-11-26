@@ -296,10 +296,9 @@ $(document).ready(function () {
 
     var fail = e => {
         alert("Error: " + e);
-    }
+    };
 
     game.init()
-        .then(() => game.run()
-                        .then(() => {}, fail), fail);
+        .then(() => game.run(), fail);
 });
 

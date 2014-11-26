@@ -2,6 +2,7 @@
 
 module Jv.Games.WebGL {
     import DataBuffer = Jv.Games.WebGL.Core.DataBuffer;
+    import Core = Jv.Games.WebGL.Core;
 
     export enum MeshRenderMode {
         Triangles,
@@ -21,7 +22,7 @@ module Jv.Games.WebGL {
         }
 
         addBuffer(values: number[], dataType: Core.DataType, stride: number) {
-            var dataBuffer = new DataBuffer(this.context, stride, dataType);
+            var dataBuffer = new DataBuffer(this.context, Core.sizeof(dataType) * stride, dataType);
             dataBuffer.data = values;
             this.buffers.push(dataBuffer);
             return dataBuffer;

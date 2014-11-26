@@ -97,15 +97,15 @@ module Jv.Games.WebGL {
             return new Matrix4(clonedBuffer);
         }
 
-        get x() {
+        get x(): number {
             return this.data[12];
         }
 
-        get y() {
+        get y(): number {
             return this.data[13];
         }
 
-        get z() {
+        get z(): number {
             return this.data[14];
         }
 
