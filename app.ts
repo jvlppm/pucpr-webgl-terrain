@@ -1,11 +1,10 @@
-///<reference path="es6-promise.d.ts" />
-///<reference path="jquery.d.ts" />
+///<reference path="Definitions/es6-promise.d.ts" />
+///<reference path="Definitions/jquery.d.ts" />
 ///<reference path="JumperCube/references.ts" />
 ///<reference path="Jv.Games.WebGL/references.ts" />
 
-var imp: any;
-
 module JumperCube {
+    import Color = Jv.Games.WebGL.Color;
     import WebGL = Jv.Games.WebGL.Core.WebGL;
     import Matrix4 = Jv.Games.WebGL.Matrix4;
     import Vector3 = Jv.Games.WebGL.Vector3;
@@ -102,9 +101,9 @@ module JumperCube {
                         Jv.Games.WebGL.Keyboard.init();
 
                         this.scene = new Jv.Games.WebGL.Scene(this.webgl);
-                        this.scene.ambientLight = Jv.Games.WebGL.Color.Rgb(0.6, 0.6, 0.6);
+                        this.scene.ambientLight = Color.Rgb(0.6, 0.6, 0.6);
                         this.scene.mainLight = new Jv.Games.WebGL.Materials.DirectionalLight(
-                            Jv.Games.WebGL.Color.Rgb(0.55, 0.55, 0.5),
+                            Color.Rgb(0.55, 0.55, 0.5),
                             new Vector3(0.85, 0.8, 0.75)
                         );
 
@@ -144,7 +143,7 @@ module JumperCube {
         }
 
         createMap() {
-            this.createPlatform(this.grassTexture, 0, 40, -0.0001, 80, 80, 10, { xAlign: 0.5, zAlign: 0.5, yAlign: 0 });
+            this.addPlatform(this.grassTexture, 0, 40, -0.0001, 80, 80, 10, { xAlign: 0.5, zAlign: 0.5, yAlign: 0 });
         }
 
         createQuestionBlock(x: number, z: number, y: number, item?: GameObject) {
@@ -162,7 +161,7 @@ module JumperCube {
             question.transform.z = z;
         }
 
-        static createUV(texture: Texture, w: number, h: number) {
+        createUV(texture: Texture, w: number, h: number) {
             if (!texture.tile)
                 return [0, 0, 1, 0, 1, 1, 0, 1];
 
@@ -177,19 +176,19 @@ module JumperCube {
 
         createStairZm(texture: Texture, x: number, z: number, y: number, w: number, d: number) {
             for (var i = 0; i < d; i++) {
-                this.createPlatform(texture, x, z - i, y + i, w, d - i, 1);
+                this.addPlatform(texture, x, z - i, y + i, w, d - i, 1);
             }
         }
 
         createStairZ(texture: Texture, x: number, z: number, y: number, w: number, d: number) {
             for (var i = 0; i < d; i++) {
-                this.createPlatform(texture, x, z, y + i, w, d - i, 1);
+                this.addPlatform(texture, x, z, y + i, w, d - i, 1);
             }
         }
 
         createStairX(texture: Texture, x: number, z: number, y: number, w: number, d: number) {
             for (var i = 0; i < w; i++) {
-                this.createPlatform(texture, x, z, y + i, w - i, d, 1);
+                this.addPlatform(texture, x, z, y + i, w - i, d, 1);
             }
         }
 
@@ -204,7 +203,7 @@ module JumperCube {
             return current;
         }
 
-        static createPlatform(context: WebGLRenderingContext, texture: Texture, x: number, z: number, y: number, w: number, d: number, h: number, args?: PlatformDefinition) {
+        createPlatform(context: WebGLRenderingContext, texture: Texture, x: number, z: number, y: number, w: number, d: number, h: number, args?: PlatformDefinition) {
             args = Game.loadDefaults(args, { debug: false, xAlign: 0, yAlign: 1, zAlign: 0, collide: true });
 
             var xUV = this.createUV(texture, d, h);
@@ -235,8 +234,8 @@ module JumperCube {
             return platform;
         }
 
-        createPlatform(texture: Texture, x: number, z: number, y: number, w: number, d: number, h: number, args?: PlatformDefinition) {
-            this.scene.add(Game.createPlatform(this.webgl.context, texture, x, z, y, w, d, h, args));
+        addPlatform(texture: Texture, x: number, z: number, y: number, w: number, d: number, h: number, args?: PlatformDefinition) {
+            this.scene.add(this.createPlatform(this.webgl.context, texture, x, z, y, w, d, h, args));
         }
 
         run() {
