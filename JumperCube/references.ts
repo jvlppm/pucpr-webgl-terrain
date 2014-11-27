@@ -26,6 +26,7 @@
 ///<reference path="Materials/SolidColorMaterial.ts" />
 ///<reference path="Materials/TextureMaterial.ts" />
 ///<reference path="Materials/VertexColorMaterial.ts" />
+///<reference path="Materials/TerrainMaterial.ts" />
 
 ///<reference path="Models/BrickBlock.ts" />
 ///<reference path="Models/Goomba.ts" />

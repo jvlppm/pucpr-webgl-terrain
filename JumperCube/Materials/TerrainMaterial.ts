@@ -4,6 +4,7 @@ module JumperCube.Materials {
     import Matrix4 = Jv.Games.WebGL.Matrix4;
     import Color = Jv.Games.WebGL.Color;
     import Material = Jv.Games.WebGL.Materials.Material;
+    import Texture = Jv.Games.WebGL.Materials.Texture;
 
     export class TerrainMaterial extends Material {
         static materialProgram: Jv.Games.WebGL.Core.ShaderProgram;
@@ -13,7 +14,52 @@ module JumperCube.Materials {
             uSpecularPower: number;
             isClipping: boolean;
             clipPlane: Matrix4;
+
+            uTex0: Texture;
+            uTex1: Texture;
+            uTex2: Texture;
+            uTex3: Texture;
         };
+
+        get texture0(): Texture {
+            return this.uniforms.uTex0;
+        }
+
+        set texture0(value: Texture) {
+            if (typeof value === "undefined")
+                throw new Error("Texture cannot be undefined");
+            this.uniforms.uTex0 = value;
+        }
+
+        get texture1(): Texture {
+            return this.uniforms.uTex1;
+        }
+
+        set texture1(value: Texture) {
+            if (typeof value === "undefined")
+                throw new Error("Texture cannot be undefined");
+            this.uniforms.uTex1 = value;
+        }
+
+        get texture2(): Texture {
+            return this.uniforms.uTex2;
+        }
+
+        set texture2(value: Texture) {
+            if (typeof value === "undefined")
+                throw new Error("Texture cannot be undefined");
+            this.uniforms.uTex2 = value;
+        }
+
+        get texture3(): Texture {
+            return this.uniforms.uTex3;
+        }
+
+        set texture3(value: Texture) {
+            if (typeof value === "undefined")
+                throw new Error("Texture cannot be undefined");
+            this.uniforms.uTex3 = value;
+        }
 
         set color(value: Color) {
             this.uniforms.uDiffuseMaterial = value;
@@ -47,9 +93,8 @@ module JumperCube.Materials {
             return this.uniforms.clipPlane;
         }
 
-        constructor(color: Color) {
-            super(SolidColorMaterial.materialProgram);
-            this.color = color;
+        constructor() {
+            super(TerrainMaterial.materialProgram);
         }
 
         setWorld(scene: Jv.Games.WebGL.Scene, cam: Jv.Games.WebGL.Camera) {

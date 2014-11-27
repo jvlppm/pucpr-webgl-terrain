@@ -54,6 +54,8 @@ module JumperCube {
         blockFloor: Texture;
 
         itemMushroom: Texture;
+        heightmapVolcano: Texture;
+        textureGrass: Texture;
 
         camera: Camera;
         scene: Scene;
@@ -78,6 +80,8 @@ module JumperCube {
 
                 { url: "Textures/item_mushroom.png", attribute: "itemMushroom" },
 
+                { url: "img/terrain/volcano.png", attribute: "heightmapVolcano" },
+                { url: "img/texture/grass.png", attribute: "textureGrass" },
             ];
             this.camera = new Camera();
             this.updateCameraProjection();
@@ -95,7 +99,7 @@ module JumperCube {
 
         init() {
             var materials: { materialProgram: Jv.Games.WebGL.Core.ShaderProgram; new (...args: any[]) }[]
-                = [Materials.TextureMaterial, Materials.VertexColorMaterial];
+                = [Materials.TextureMaterial, Materials.VertexColorMaterial, Materials.TerrainMaterial];
 
             return Jv.Games.WebGL.Materials.Material.initAll(this.webgl.context, materials)
                 .then(() => this.loadAssets())
@@ -142,13 +146,14 @@ module JumperCube {
                         maxDistance: 10,
                         speed: 5
                     });
-                    this.camera.add(JumperCube.Behaviors.KeepAbove, {
-                        target: player,
-                        minDistance: 3,
-                        maxDistance: 7,
-                        speed: 1
-                    });
-                    this.camera.add(JumperCube.Behaviors.LookAtObject, {target: player});
+                    //this.camera.add(JumperCube.Behaviors.KeepAbove, {
+                    //    target: player,
+                    //    minDistance: 3,
+                    //    maxDistance: 7,
+                    //    speed: 1
+                    //});
+
+                    this.camera.add(JumperCube.Behaviors.LookAtObject, {target: this.createVolcano()});
 
                     this.createMap();
 
@@ -157,7 +162,22 @@ module JumperCube {
         }
 
         createMap() {
-            this.addPlatform(this.grassTexture, 0, 40, -0.0001, 80, 80, 10, { xAlign: 0.5, zAlign: 0.5, yAlign: 0 });
+            //this.addPlatform(this.grassTexture, 0, 40, -0.0001, 80, 80, 10, { xAlign: 0.5, zAlign: 0.5, yAlign: 0 });
+
+
+        }
+
+        private createVolcano() {
+            var volcano = new GameObject();
+
+            var volcanoMaterial = new Materials.TerrainMaterial();
+            volcanoMaterial.texture0 = this.textureGrass;
+
+            volcano.add(MeshRenderer, {
+                mesh: new Mesh.Terrain(this.webgl.context, imp.getImageData(this.heightmapVolcano.image)),
+                material: volcanoMaterial
+            });
+            return this.scene.add(volcano);
         }
 
         createQuestionBlock(x: number, z: number, y: number, item?: GameObject) {

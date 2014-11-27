@@ -21,13 +21,13 @@ module JumperCube.Mesh {
             var data = Terrain.createData(heightMap, scale);
 
             this.addBuffer(data.vertices, DataType.Float, 3)
-                .attrib("aVertexPosition");
+                .addAttrib("aVertexPosition");
             this.addBuffer(data.normals, DataType.Float, 3)
-                .attrib("aVertexNormal");
+                .addAttrib("aVertexNormal");
             this.addBuffer(data.texCoord, DataType.Float, 2)
-                .attrib("aTexCoord");
+                .addAttrib("aTexCoord");
             this.addBuffer(data.texWeights, DataType.Float, 4)
-                .attrib("aTexWeight");
+                .addAttrib("aTexWeight");
 
             this.index = data.indices;
         }
@@ -89,7 +89,7 @@ module JumperCube.Mesh {
                 indices: []
             };
 
-            var normals: vec3[];
+            var normals: vec3[] = [];
 
             //***** Criação do vértices *****
             scale = scale || 0.5;
@@ -184,9 +184,9 @@ module JumperCube.Mesh {
 
             //Copiamos as normais para o array data.normals
             for (i = 0; i < width*depth; i++) {
-                data.normals[i*3+0] = data.normals[i][0];
-                data.normals[i*3+1] = data.normals[i][1];
-                data.normals[i*3+2] = data.normals[i][2];
+                data.normals[i*3+0] = normals[i][0];
+                data.normals[i*3+1] = normals[i][1];
+                data.normals[i*3+2] = normals[i][2];
             }
 
             return data;
