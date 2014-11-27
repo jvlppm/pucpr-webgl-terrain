@@ -14,11 +14,29 @@ module JumperCube.Mesh {
         indices: number[];
     }
 
+    interface TerrainConfig {
+        heightScale: number;
+        smoothness: number;
+        width: number;
+        depth: number;
+    }
+
     export class Terrain extends WebGL.Mesh {
-        constructor(context: WebGLRenderingContext, heightMap?: ImageData, scale = 1) {
+        constructor(context: WebGLRenderingContext, heightMap?: ImageData, config?: TerrainConfig) {
             super(context, WebGL.MeshRenderMode.Triangles);
 
-            var data = Terrain.createData(heightMap, scale);
+            var defaultConfig = {
+                heightScale: 0.5,
+                smoothness: 1,
+                width: heightMap.width,
+                depth: heightMap.height
+            };
+            config = config || defaultConfig;
+            for(var conf in defaultConfig)
+                if (typeof config[conf] === "undefined")
+                    config[conf] = defaultConfig[conf];
+
+            var data = Terrain.createData(heightMap, config);
 
             this.addBuffer(data.vertices, DataType.Float, 3)
                 .addAttrib("aVertexPosition");
@@ -79,7 +97,7 @@ module JumperCube.Mesh {
             }
         }
 
-        private static createData(img: ImageData, scale?: number, smoothness?: number): TerrainData {
+        private static createData(img: ImageData, config: TerrainConfig): TerrainData {
             var data: TerrainData = {
                 maxHeight: 0,
                 vertices: [],
@@ -92,21 +110,21 @@ module JumperCube.Mesh {
             var normals: vec3[] = [];
 
             //***** Criação do vértices *****
-            scale = scale || 0.5;
-            smoothness = smoothness || 1;
-
             var width = img.width;
             var depth = img.height;
 
             var hw = (width-1) / 2;
             var hd = (depth-1) / 2;
 
+            var xRatio = config.width / img.width;
+            var dRatio = config.depth / img.height;
+
             for (var z = 0; z < depth; z++) {
                 for (var x = 0; x < width; x++) {
                     var posV = (x + z * width)*3;
-                    data.vertices[posV+0] = x - hw;
-                    data.vertices[posV+1] = imp.getRGB(img, x, z)[0] * scale;
-                    data.vertices[posV+2] = z - hd;
+                    data.vertices[posV+0] = (x - hw) * xRatio;
+                    data.vertices[posV+1] = imp.getRGB(img, x, z)[0] * config.heightScale;
+                    data.vertices[posV+2] = (z - hd) * dRatio;
 
                     normals[x + z * width] = vec3.create();
 
@@ -116,7 +134,7 @@ module JumperCube.Mesh {
                 }
             }
 
-            for (var s = 0; s < smoothness; s++) {
+            for (var s = 0; s < config.smoothness; s++) {
                 Terrain.smooth(data, width, depth);
             }
 
