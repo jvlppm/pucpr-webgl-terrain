@@ -10,6 +10,7 @@ module JumperCube.Materials {
         static materialProgram: Jv.Games.WebGL.Core.ShaderProgram;
 
         uniforms: {
+            uAmbientMaterial: Color;
             uDiffuseMaterial: Color;
             uSpecularPower: number;
             isClipping: boolean;
@@ -69,6 +70,14 @@ module JumperCube.Materials {
             return this.uniforms.uDiffuseMaterial;
         }
 
+        set ambient(value: Color) {
+            this.uniforms.uAmbientMaterial = value;
+        }
+
+        get ambient() {
+            return this.uniforms.uAmbientMaterial;
+        }
+
         set specularPower(value: number) {
             this.uniforms.uSpecularPower = value;
         }
@@ -95,11 +104,14 @@ module JumperCube.Materials {
 
         constructor() {
             super(TerrainMaterial.materialProgram);
+            this.ambient = Color.Rgb(1, 1, 1);
+            this.clipping = false;
         }
 
         setWorld(scene: Jv.Games.WebGL.Scene, cam: Jv.Games.WebGL.Camera) {
             this.setUniform("uProjection", cam.projection);
             this.setUniform("uView", cam.view);
+            this.setUniform("uEyePos", cam.globalTransform.position);
 
             if (typeof scene.ambientLight !== "undefined")
                 this.setUniform("uAmbientLight", scene.ambientLight);

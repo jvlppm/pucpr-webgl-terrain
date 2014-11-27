@@ -51,6 +51,9 @@ module Jv.Games.WebGL.Materials {
                 case "boolean":
                     this.program.getUniform(name).setInt(value? 1 : 0);
                     return;
+                case "number":
+                    this.program.getUniform(name).setFloat(value);
+                    return;
                 default:
                     throw new Error("Uniform type not supported");
             }

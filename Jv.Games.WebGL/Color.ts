@@ -5,20 +5,20 @@ module Jv.Games.WebGL {
         hasAlphaChannel: boolean;
 
         constructor(public data: Float32Array, public startIndex: number = 0) {
-            if (startIndex + 4 > data.length)
+            if (data.length == 3)
+                this.hasAlphaChannel = false;
+            else if (data.length == 4)
+                this.hasAlphaChannel = true;
+            else
                 throw new Error("Invalid color data");
         }
 
         static Rgb(red: number, green: number, blue: number, alpha?: number) {
-            var hasAlpha = true;
             if (typeof alpha === "undefined") {
-                hasAlpha = false;
-                alpha = 1;
+                return new Color(new Float32Array([red, green, blue]));
             }
 
-            var color = new Color(new Float32Array([red, green, blue, alpha]));
-            color.hasAlphaChannel = hasAlpha;
-            return color;
+            return new Color(new Float32Array([red, green, blue, alpha]));
         }
 
         get red(): number {
@@ -51,6 +51,9 @@ module Jv.Games.WebGL {
         }
 
         set alpha(value: number) {
+            if (!this.hasAlphaChannel)
+                throw new Error("Trying to set alpha on non transparent color");
+
             var hasAlpha = true;
             if (typeof value === "undefined") {
                 hasAlpha = false;

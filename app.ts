@@ -99,7 +99,7 @@ module JumperCube {
 
         init() {
             var materials: { materialProgram: Jv.Games.WebGL.Core.ShaderProgram; new (...args: any[]) }[]
-                = [Materials.TextureMaterial, Materials.VertexColorMaterial, Materials.TerrainMaterial];
+                = [Materials.TextureMaterial, Materials.VertexColorMaterial, Materials.TerrainMaterial, Materials.SolidColorMaterial];
 
             return Jv.Games.WebGL.Materials.Material.initAll(this.webgl.context, materials)
                 .then(() => this.loadAssets())
@@ -146,14 +146,13 @@ module JumperCube {
                         maxDistance: 10,
                         speed: 5
                     });
-                    //this.camera.add(JumperCube.Behaviors.KeepAbove, {
-                    //    target: player,
-                    //    minDistance: 3,
-                    //    maxDistance: 7,
-                    //    speed: 1
-                    //});
-
-                    this.camera.add(JumperCube.Behaviors.LookAtObject, {target: this.createVolcano()});
+                    this.camera.add(JumperCube.Behaviors.KeepAbove, {
+                        target: player,
+                        minDistance: 3,
+                        maxDistance: 7,
+                        speed: 1
+                    });
+                    this.camera.add(JumperCube.Behaviors.LookAtObject, {target: player});
 
                     this.createMap();
 
@@ -162,22 +161,7 @@ module JumperCube {
         }
 
         createMap() {
-            //this.addPlatform(this.grassTexture, 0, 40, -0.0001, 80, 80, 10, { xAlign: 0.5, zAlign: 0.5, yAlign: 0 });
-
-
-        }
-
-        private createVolcano() {
-            var volcano = new GameObject();
-
-            var volcanoMaterial = new Materials.TerrainMaterial();
-            volcanoMaterial.texture0 = this.textureGrass;
-
-            volcano.add(MeshRenderer, {
-                mesh: new Mesh.Terrain(this.webgl.context, imp.getImageData(this.heightmapVolcano.image)),
-                material: volcanoMaterial
-            });
-            return this.scene.add(volcano);
+            this.addPlatform(this.grassTexture, 0, 40, -0.0001, 80, 80, 10, { xAlign: 0.5, zAlign: 0.5, yAlign: 0 });
         }
 
         createQuestionBlock(x: number, z: number, y: number, item?: GameObject) {
@@ -244,13 +228,25 @@ module JumperCube {
             var yUV = this.createUV(texture, w, d);
             var zUV = this.createUV(texture, w, h);
 
+
+
+
+            var volcanoMaterial = new Materials.TerrainMaterial();
+            volcanoMaterial.texture0 = this.textureGrass;
+            volcanoMaterial.texture1 = this.textureGrass;
+            volcanoMaterial.texture2 = this.textureGrass;
+            volcanoMaterial.texture3 = this.textureGrass;
+            volcanoMaterial.specularPower = 1;
+
+            var platformMeshRenderer: {[x: string]: any} = {
+                mesh: new Mesh.Terrain(this.webgl.context, imp.getImageData(this.heightmapVolcano.image), { smoothness: 1, width: w, depth: d, heightScale: 0.05 }),
+                material: volcanoMaterial
+            };
+
             var platform = new GameObject();
 
             var align = platform.add(new GameObject())
-                .add(MeshRenderer, {
-                    mesh: new JumperCube.Mesh.Cube(w, h, d, context, zUV, zUV, xUV, xUV, yUV, yUV),
-                    material: new JumperCube.Materials.TextureMaterial(texture)
-                });
+                .add(MeshRenderer, platformMeshRenderer);
             if (args.collide)
                 align.add(Jv.Games.WebGL.Components.AxisAlignedBoxCollider, { radiusWidth: w / 2, radiusHeight: h / 2, radiusDepth: d / 2 });
 
