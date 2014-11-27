@@ -9,7 +9,7 @@ module JumperCube.Mesh {
         constructor(context: WebGLRenderingContext) {
             super(context, WebGL.MeshRenderMode.Triangles);
 
-            var data = this.addBuffer([
+            this.addBuffer([
                 // Front face
                 -1.0, -1.0, 1.0,
                 1.0, -1.0, 1.0,
@@ -45,11 +45,10 @@ module JumperCube.Mesh {
                 -1.0, -1.0, 1.0,
                 -1.0, 1.0, 1.0,
                 -1.0, 0.6, -1.0,
-            ].map(i => i / 2.1), DataType.Float, 3);
+            ].map(i => i / 2.1), DataType.Float, 3)
+             .addAttrib("position");
 
-            data.attrib("position", 3, false, 0);
-
-            var textureData = this.addBuffer([
+            this.addBuffer([
                 // Front face
                 0.55521808486544, 0.372123763830412,
                 0.701497572842308, 0.188534221090767,
@@ -86,11 +85,9 @@ module JumperCube.Mesh {
                 0.701497572842308, 0.554489376285127,
                 0.510656121640699, 0.683002056202879,
 
-            ], DataType.Float, 2);
+            ], DataType.Float, 2).addAttrib("textureCoord", 2);
 
-            textureData.attrib("textureCoord", 2, false, 0);
-
-            var normalData = this.addBuffer([
+            this.addBuffer([
             // Front
                 0.0, 0.0, 1.0,
                 0.0, 0.0, 1.0,
@@ -126,8 +123,8 @@ module JumperCube.Mesh {
                 -1.0, 0.0, 0.0,
                 -1.0, 0.0, 0.0,
                 -1.0, 0.0, 0.0
-            ], Jv.Games.WebGL.Core.DataType.Float, 3);
-            normalData.attrib("normal", 3, false, 0);
+            ], Jv.Games.WebGL.Core.DataType.Float, 3)
+                .addAttrib("normal");
 
             this.index = [
                 0, 1, 2, 0, 2, 3,    // Front face

@@ -21,8 +21,8 @@ module Jv.Games.WebGL {
             this.buffers = [];
         }
 
-        addBuffer(values: number[], dataType: Core.DataType, stride: number) {
-            var dataBuffer = new DataBuffer(this.context, Core.sizeof(dataType) * stride, dataType);
+        addBuffer(values: number[], dataType: Core.DataType, size: number) {
+            var dataBuffer = new DataBuffer(this.context, size, dataType);
             dataBuffer.data = values;
             this.buffers.push(dataBuffer);
             return dataBuffer;

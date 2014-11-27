@@ -22,7 +22,7 @@ module JumperCube.Mesh {
 
             var w = width / 2, h = height / 2, d = depth / 2;
 
-            var data = this.addBuffer([
+            this.addBuffer([
                 // Front face
                 -w, -h, d,
                 0, 0, 1,
@@ -82,12 +82,11 @@ module JumperCube.Mesh {
                 0, 1, 0,
                 -w, h, -d,
                 0, 1, 0,
-            ], DataType.Float, 6);
+            ], DataType.Float, 6)
+            .addAttrib("position", 3)
+            .addAttrib("color", 3);
 
-            data.attrib("position", 3, false, 0);
-            data.attrib("color", 3, false, 3);
-
-            var normalData = this.addBuffer([
+            this.addBuffer([
             // Front
                 0.0, 0.0, 1.0,
                 0.0, 0.0, 1.0,
@@ -123,10 +122,10 @@ module JumperCube.Mesh {
                 -1.0, 0.0, 0.0,
                 -1.0, 0.0, 0.0,
                 -1.0, 0.0, 0.0
-            ], Jv.Games.WebGL.Core.DataType.Float, 3);
-            normalData.attrib("normal", 3, false, 0);
+            ], Jv.Games.WebGL.Core.DataType.Float, 3)
+                .addAttrib("normal");
 
-            var textureData = this.addBuffer([
+            this.addBuffer([
                 // Front face
                 frontUV[0], frontUV[1],
                 frontUV[2], frontUV[3],
@@ -163,9 +162,8 @@ module JumperCube.Mesh {
                 leftUV[4], leftUV[5],
                 leftUV[6], leftUV[7],
 
-            ], DataType.Float, 2);
-
-            textureData.attrib("textureCoord", 2, false, 0);
+            ], DataType.Float, 2)
+                .addAttrib("textureCoord");
 
             this.index = [
                 0, 1, 2, 0, 2, 3,    // Front face
