@@ -111,7 +111,7 @@ module JumperCube {
                     this.scene.ambientLight = Color.Rgb(0.6, 0.6, 0.6);
                     this.scene.mainLight = new Jv.Games.WebGL.Materials.DirectionalLight(
                         Color.Rgb(0.55, 0.55, 0.5),
-                        new Vector3(0.85, 0.8, 0.75)
+                        new Vector3(-0.85, 0.8, -0.75)
                     );
 
                     var player = this.scene.add(new JumperCube.Models.Mario(this.webgl.context, this.marioTexture));
@@ -236,7 +236,7 @@ module JumperCube {
             volcanoMaterial.texture1 = this.textureGrass;
             volcanoMaterial.texture2 = this.textureGrass;
             volcanoMaterial.texture3 = this.textureGrass;
-            volcanoMaterial.specularPower = 1;
+            volcanoMaterial.specularPower = 32;
 
             var platformMeshRenderer: {[x: string]: any} = {
                 mesh: new Mesh.Terrain(this.webgl.context, imp.getImageData(this.heightmapVolcano.image), { smoothness: 1, width: w, depth: d, heightScale: 0.05 }),

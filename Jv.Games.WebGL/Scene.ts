@@ -12,6 +12,7 @@ module Jv.Games.WebGL {
         clearColor: Color;
         drawables: GameObject[];
         ambientLight = Color.Rgb(1, 1, 1);
+        specularLight = Color.Rgb(1, 1, 1);
         mainLight: Materials.DirectionalLight;
 
         directionalLight: Materials.DirectionalLight;

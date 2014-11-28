@@ -23,7 +23,7 @@
       <option name="passParentEnvs" value="true" />
       <option name="program" value="$USER_HOME$/opt/nodejs/bin/node_modules/typescript/bin/tsc" />
       <option name="scopeName" value="Jv.Games.WebGL" />
-      <option name="trackOnlyRoot" value="false" />
+      <option name="trackOnlyRoot" value="true" />
       <option name="workingDir" value="$ProjectFileDir$" />
       <envs>
         <env name="PATH" value="$PATH:/home/joao/opt/nodejs/bin/" />
@@ -51,7 +51,7 @@
       <option name="passParentEnvs" value="true" />
       <option name="program" value="$USER_HOME$/opt/nodejs/bin/node_modules/typescript/bin/tsc" />
       <option name="scopeName" value="JumperCube" />
-      <option name="trackOnlyRoot" value="false" />
+      <option name="trackOnlyRoot" value="true" />
       <option name="workingDir" value="$ProjectFileDir$" />
       <envs>
         <env name="PATH" value="$PATH:/home/joao/opt/nodejs/bin/" />

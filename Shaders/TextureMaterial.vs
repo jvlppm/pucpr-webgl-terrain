@@ -20,7 +20,7 @@ void main(void) { //pre-built function
     vTextureCoord = textureCoord;
 
     // Apply lighting effect
-    highp vec4 transformedNormal = Nmatrix * vec4(normal, 1.0);
+    highp vec4 transformedNormal = Nmatrix * vec4(-normal, 1.0);
     highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
     vLighting = ambientLight + (directionalLightColor * directional);
 }

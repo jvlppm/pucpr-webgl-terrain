@@ -12,7 +12,9 @@ module JumperCube.Materials {
         uniforms: {
             uAmbientMaterial: Color;
             uDiffuseMaterial: Color;
+            uSpecularMaterial: Color;
             uSpecularPower: number;
+
             isClipping: boolean;
             clipPlane: Matrix4;
 
@@ -21,83 +23,71 @@ module JumperCube.Materials {
             uTex2: Texture;
             uTex3: Texture;
         };
-
-        get texture0(): Texture {
-            return this.uniforms.uTex0;
-        }
-
         set texture0(value: Texture) {
             if (typeof value === "undefined")
                 throw new Error("Texture cannot be undefined");
             this.uniforms.uTex0 = value;
         }
-
-        get texture1(): Texture {
-            return this.uniforms.uTex1;
-        }
-
         set texture1(value: Texture) {
             if (typeof value === "undefined")
                 throw new Error("Texture cannot be undefined");
             this.uniforms.uTex1 = value;
         }
-
-        get texture2(): Texture {
-            return this.uniforms.uTex2;
-        }
-
         set texture2(value: Texture) {
             if (typeof value === "undefined")
                 throw new Error("Texture cannot be undefined");
             this.uniforms.uTex2 = value;
         }
-
-        get texture3(): Texture {
-            return this.uniforms.uTex3;
-        }
-
         set texture3(value: Texture) {
             if (typeof value === "undefined")
                 throw new Error("Texture cannot be undefined");
             this.uniforms.uTex3 = value;
         }
-
-        set color(value: Color) {
-            this.uniforms.uDiffuseMaterial = value;
-        }
-
-        get color() {
-            return this.uniforms.uDiffuseMaterial;
-        }
-
         set ambient(value: Color) {
             this.uniforms.uAmbientMaterial = value;
         }
-
-        get ambient() {
-            return this.uniforms.uAmbientMaterial;
+        set diffuse(value: Color) {
+            this.uniforms.uDiffuseMaterial = value;
         }
-
+        set specular(value: Color) {
+            this.uniforms.uSpecularMaterial = value;
+        }
         set specularPower(value: number) {
             this.uniforms.uSpecularPower = value;
         }
+        set clipPane(value: Matrix4) {
+            this.uniforms.clipPlane = value;
+            this.uniforms.isClipping = typeof(value) !== "undefined";
+        }
 
+
+        get texture0(): Texture {
+            return this.uniforms.uTex0;
+        }
+        get texture1(): Texture {
+            return this.uniforms.uTex1;
+        }
+        get texture2(): Texture {
+            return this.uniforms.uTex2;
+        }
+        get texture3(): Texture {
+            return this.uniforms.uTex3;
+        }
+        get ambient() {
+            return this.uniforms.uAmbientMaterial;
+        }
+        get diffuse() {
+            return this.uniforms.uDiffuseMaterial;
+        }
+        get specular() {
+            return this.uniforms.uSpecularMaterial;
+        }
         get specularPower() {
             return this.uniforms.uSpecularPower;
         }
-
-        set clipping(value: boolean) {
-            this.uniforms.isClipping = value;
-        }
-
         get clipping() {
             return this.uniforms.isClipping;
         }
-
-        set clipPane(value: Matrix4) {
-            this.uniforms.clipPlane = value;
-        }
-
         get clipPane() {
             return this.uniforms.clipPlane;
         }
@@ -105,6 +95,8 @@ module JumperCube.Materials {
         constructor() {
             super(TerrainMaterial.materialProgram);
             this.ambient = Color.Rgb(1, 1, 1);
+            this.diffuse = Color.Rgb(1, 1, 1);
+            this.specular = Color.Rgb(0, 0, 0);
             this.clipping = false;
         }
 
@@ -117,9 +109,12 @@ module JumperCube.Materials {
                 this.setUniform("uAmbientLight", scene.ambientLight);
 
             if (typeof scene.mainLight !== "undefined") {
-                this.setUniform("uSpecularLight", scene.mainLight.color);
+                this.setUniform("uDiffuseLight", scene.mainLight.color);
                 this.setUniform("uLightDir", scene.mainLight.direction);
             }
+
+            if (typeof scene.specularLight !== "undefined")
+                this.setUniform("uSpecularLight", scene.specularLight);
         }
 
         setModel(object: Jv.Games.WebGL.GameObject) {
