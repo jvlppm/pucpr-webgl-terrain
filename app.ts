@@ -136,7 +136,7 @@ module JumperCube {
 
                     this.scene.add(this.camera);
                     this.camera.transform.position.z = 65;
-                    this.camera.transform.position.y = 8;
+                    this.camera.transform.position.y = 30;
 
                     this.camera.add(Components.RigidBody, {friction: new Vector3(1, 0, 1)});
                     this.camera.add(Components.AxisAlignedBoxCollider);
@@ -233,9 +233,9 @@ module JumperCube {
 
             var volcanoMaterial = new Materials.TerrainMaterial();
             volcanoMaterial.texture0 = this.textureGrass;
-            volcanoMaterial.texture1 = this.textureGrass;
-            volcanoMaterial.texture2 = this.textureGrass;
-            volcanoMaterial.texture3 = this.textureGrass;
+            volcanoMaterial.texture1 = this.goombaTexture;
+            volcanoMaterial.texture2 = this.marioTexture;
+            volcanoMaterial.texture3 = this.grassTexture;
             volcanoMaterial.specularPower = 32;
 
             var platformMeshRenderer: {[x: string]: any} = {
