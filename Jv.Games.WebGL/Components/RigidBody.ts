@@ -5,6 +5,7 @@ module Jv.Games.WebGL.Components {
         private acceleration: Vector3;
         private instantaneousAcceleration: Vector3;
         private collider: Collider;
+        private reposition: Reposition;
 
         momentum: Vector3;
         mass = 1;
@@ -14,6 +15,8 @@ module Jv.Games.WebGL.Components {
         constructor(object: GameObject, args: { [prop: string]: any }) {
             super(object);
             super.loadArgs(args);
+
+            this.reposition = { height: false };
 
             this.acceleration = new Vector3();
             this.instantaneousAcceleration = new Vector3();
@@ -50,7 +53,12 @@ module Jv.Games.WebGL.Components {
 
             var oldTransform = this.object.transform;
             this.object.transform = this.object.transform.translate(toMove.scale(MeterSize * deltaTime));
-            if (this.validPosition( axis === 0 || axis === 2 )) {
+            var reposition = typeof axis === "undefined"? this.reposition : undefined;
+            if (this.validPosition(reposition)) {
+                if (reposition && reposition.height) {
+                    acceleration.y = 0;
+                    this.momentum.y = 0;
+                }
                 this.momentum._add(acceleration);
                 return true;
             }
@@ -65,7 +73,8 @@ module Jv.Games.WebGL.Components {
             var accellSecs = addedAccel.scale(deltaTime).add(addedInstantAccel);
             //this.momentum._add(addedInstantAccel);
 
-            if (!this.tryMove(deltaTime, accellSecs)) {
+            this.reposition.height = false;
+            if (!this.tryMove(deltaTime, accellSecs, undefined)) {
                 if (!this.tryMove(deltaTime, accellSecs, 1))
                     this.momentum.y = 0;
                 if (!this.tryMove(deltaTime, accellSecs, 0))
@@ -84,7 +93,7 @@ module Jv.Games.WebGL.Components {
             this.acceleration._add(addedAccel.scale(-1));
         }
 
-        validPosition(allowsReposition?: boolean) {
+        validPosition(reposition?: Reposition) {
             if (typeof this.collider === "undefined")
                 return true;
 
@@ -99,9 +108,9 @@ module Jv.Games.WebGL.Components {
                 if (other == this.collider)
                     continue;
 
-                var intersects = this.collider.intersects(other, allowsReposition);
+                var intersects = this.collider.intersects(other, reposition);
                 if(typeof intersects === "undefined")
-                    intersects = other.intersects(this.collider, allowsReposition);
+                    intersects = other.intersects(this.collider, reposition);
 
                 if (intersects) {
                     if (this.collider.isTrigger || other.isTrigger) {

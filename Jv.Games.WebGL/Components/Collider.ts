@@ -1,6 +1,10 @@
 ﻿///<reference path="../references.ts" />
 
 module Jv.Games.WebGL.Components {
+    export interface Reposition {
+        height: boolean;
+    }
+
     export class Collider extends Component<GameObject> {
         isTrigger = false;
 
@@ -9,7 +13,7 @@ module Jv.Games.WebGL.Components {
             super.loadArgs(args);
         }
 
-        intersects(collider: Collider, allowsReposition?: boolean) { }
+        intersects(collider: Collider, reposition?: Reposition) { }
     }
 
     export class AxisAlignedBoxCollider extends Collider {

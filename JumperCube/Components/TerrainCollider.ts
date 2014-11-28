@@ -7,6 +7,7 @@ module JumperCube.Components {
     import Terrain = JumperCube.Mesh.Terrain;
     import Vector3 = Jv.Games.WebGL.Vector3;
     import RigidBody = Jv.Games.WebGL.Components.RigidBody;
+    import Reposition = Jv.Games.WebGL.Components.Reposition;
 
     export class TerrainCollider extends Collider {
         radiusX = 0;
@@ -20,7 +21,7 @@ module JumperCube.Components {
             this.tmpVector = new Vector3();
         }
 
-        intersects(collider: Collider, allowsReposition?: boolean) {
+        intersects(collider: Collider, reposition?: Reposition) {
             if (collider instanceof BoxCollider) {
                 var box = <BoxCollider>collider;
                 var distance = collider.object.globalTransform.position.sub(this.object.globalTransform.position);
@@ -29,17 +30,14 @@ module JumperCube.Components {
                 var outsideArea = box.radiusWidth + this.radiusX < Math.abs(distance.x) ||
                                box.radiusDepth + this.radiusZ < Math.abs(distance.z);
 
-                if (allowsReposition && !outsideArea && distance.y < box.radiusHeight) {
+                if (typeof reposition !== "undefined" && !outsideArea && distance.y < box.radiusHeight) {
                     this.tmpVector.y = box.radiusHeight - distance.y;
                     box.object.transform._translate(this.tmpVector);
                     distance.y = box.radiusHeight;
+                    reposition.height = true;
                 }
 
-                if (outsideArea || box.radiusHeight < Math.abs(distance.y)) {
-                    return false;
-                }
-
-                return true;
+                return !(outsideArea || box.radiusHeight < Math.abs(distance.y));
             }
         }
     }
