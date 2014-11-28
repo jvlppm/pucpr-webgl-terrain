@@ -13,7 +13,7 @@ module JumperCube {
     import Scene = Jv.Games.WebGL.Scene;
     import MeshRenderer = Jv.Games.WebGL.Components.MeshRenderer;
     import GameObject = Jv.Games.WebGL.GameObject;
-    import Components = Jv.Games.WebGL.Components;
+    import CoreComponents = Jv.Games.WebGL.Components;
     import Texture = Jv.Games.WebGL.Materials.Texture;
 
     import Behaviors = JumperCube.Behaviors;
@@ -121,7 +121,7 @@ module JumperCube {
                         moveForce: 20,
                         camera: this.camera
                     });
-                    player.transform.y = 1.5;
+                    player.transform.y = 15;
                     player.transform.z = 55;
 
                     var goombas:Vector3[] = [
@@ -135,11 +135,11 @@ module JumperCube {
                     });
 
                     this.scene.add(this.camera);
-                    this.camera.transform.position.z = 65;
-                    this.camera.transform.position.y = 30;
+                    this.camera.transform.position.z = player.globalTransform.position.z - 3;
+                    this.camera.transform.position.y = player.globalTransform.position.y - 3;
 
-                    this.camera.add(Components.RigidBody, {friction: new Vector3(1, 0, 1)});
-                    this.camera.add(Components.AxisAlignedBoxCollider);
+                    this.camera.add(CoreComponents.RigidBody, {friction: new Vector3(1, 0, 1)});
+                    this.camera.add(CoreComponents.AxisAlignedBoxCollider);
                     this.camera.add(JumperCube.Behaviors.Follow, {
                         target: player,
                         minDistance: 4,
@@ -238,8 +238,10 @@ module JumperCube {
             volcanoMaterial.texture3 = this.grassTexture;
             volcanoMaterial.specularPower = 32;
 
+            var mesh = new Mesh.Terrain(this.webgl.context, imp.getImageData(this.heightmapVolcano.image), { smoothness: 1, width: w, depth: d, heightScale: 0.05 });
+
             var platformMeshRenderer: {[x: string]: any} = {
-                mesh: new Mesh.Terrain(this.webgl.context, imp.getImageData(this.heightmapVolcano.image), { smoothness: 1, width: w, depth: d, heightScale: 0.05 }),
+                mesh: mesh,
                 material: volcanoMaterial
             };
 
@@ -248,7 +250,7 @@ module JumperCube {
             var align = platform.add(new GameObject())
                 .add(MeshRenderer, platformMeshRenderer);
             if (args.collide)
-                align.add(Jv.Games.WebGL.Components.AxisAlignedBoxCollider, { radiusWidth: w / 2, radiusHeight: h / 2, radiusDepth: d / 2 });
+                align.add(Components.TerrainCollider, { radiusX: w / 2, radiusZ: d / 2, terrain: mesh });
 
             align.transform.x = - w / 2 + w * args.xAlign;
             align.transform.z = - d / 2 + d * args.zAlign;

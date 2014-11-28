@@ -5,7 +5,7 @@ module JumperCube.Mesh {
     import DataBuffer = Jv.Games.WebGL.Core.DataBuffer;
     import DataType = Jv.Games.WebGL.Core.DataType;
 
-    interface TerrainData {
+    export interface TerrainData {
         vertices: number[];
         maxHeight: number;
         texCoord: number[];
@@ -22,6 +22,12 @@ module JumperCube.Mesh {
     }
 
     export class Terrain extends WebGL.Mesh {
+        data: TerrainData;
+        imgWidth: number;
+        imgDepth: number;
+        xRatio: number;
+        zRatio: number;
+
         constructor(context: WebGLRenderingContext, heightMap?: ImageData, config?: TerrainConfig) {
             super(context, WebGL.MeshRenderMode.Triangles);
 
@@ -37,6 +43,10 @@ module JumperCube.Mesh {
                     config[conf] = defaultConfig[conf];
 
             var data = Terrain.createData(heightMap, config);
+            this.imgWidth = heightMap.width;
+            this.imgDepth = heightMap.height;
+            this.xRatio = config.width / heightMap.width;
+            this.zRatio = config.depth / heightMap.height;
 
             this.addBuffer(data.vertices, DataType.Float, 3)
                 .addAttrib("aVertexPosition");
@@ -48,6 +58,15 @@ module JumperCube.Mesh {
                 .addAttrib("aTexWeight");
 
             this.index = data.indices;
+            this.data = data;
+        }
+
+        getHeight(x: number, z: number) {
+            x = x / this.xRatio + this.imgWidth / 2;
+            z = z / this.zRatio + this.imgDepth / 2;
+
+            var posPy = ((Math.floor(x) + Math.floor(z) * this.imgWidth)*3)+1;
+            return this.data.vertices[posPy];
         }
 
         //region Helpers

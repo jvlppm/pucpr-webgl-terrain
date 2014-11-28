@@ -3,6 +3,8 @@
 
 ///<reference path="Trigger.ts" />
 
+///<reference path="Components/TerrainCollider.ts" />
+
 ///<reference path="Behaviors/Blink.ts" />
 ///<reference path="Behaviors/Bouncy.ts" />
 ///<reference path="Behaviors/Controller.ts" />

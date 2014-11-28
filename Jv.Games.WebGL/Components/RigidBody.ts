@@ -50,7 +50,7 @@ module Jv.Games.WebGL.Components {
 
             var oldTransform = this.object.transform;
             this.object.transform = this.object.transform.translate(toMove.scale(MeterSize * deltaTime));
-            if (this.validPosition()) {
+            if (this.validPosition( axis === 0 || axis === 2 )) {
                 this.momentum._add(acceleration);
                 return true;
             }
@@ -84,7 +84,7 @@ module Jv.Games.WebGL.Components {
             this.acceleration._add(addedAccel.scale(-1));
         }
 
-        validPosition() {
+        validPosition(allowsReposition?: boolean) {
             if (typeof this.collider === "undefined")
                 return true;
 
@@ -99,7 +99,11 @@ module Jv.Games.WebGL.Components {
                 if (other == this.collider)
                     continue;
 
-                if (this.collider.intersects(other)) {
+                var intersects = this.collider.intersects(other, allowsReposition);
+                if(typeof intersects === "undefined")
+                    intersects = other.intersects(this.collider, allowsReposition);
+
+                if (intersects) {
                     if (this.collider.isTrigger || other.isTrigger) {
                         this.object.sendMessage("onTrigger", true, other);
                         other.object.sendMessage("onTrigger", true, this.collider);
