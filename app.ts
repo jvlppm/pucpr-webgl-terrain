@@ -35,6 +35,16 @@ module JumperCube {
     }
 
     export class Game {
+        // Entities
+        player: GameObject;
+        enemies: GameObject[];
+        targetEnemy: GameObject;
+
+        camera: Camera;
+        enemyCamera: Camera;
+
+        scene: Scene;
+
         // -- Assets --
         textures: TextureDescription[];
         marioTexture: Texture;
@@ -54,11 +64,8 @@ module JumperCube {
         blockFloor: Texture;
 
         itemMushroom: Texture;
-        heightmapVolcano: Texture;
+        heightmapTerrain: Texture;
         textureGrass: Texture;
-
-        camera: Camera;
-        scene: Scene;
 
         constructor(public webgl: WebGL) {
             this.textures = [
@@ -80,10 +87,12 @@ module JumperCube {
 
                 { url: "Textures/item_mushroom.png", attribute: "itemMushroom" },
 
-                { url: "img/terrain/volcano.png", attribute: "heightmapVolcano" },
+                { url: "img/terrain/island.png", attribute: "heightmapTerrain" },
                 { url: "img/texture/grass.png", attribute: "textureGrass" },
             ];
             this.camera = new Camera();
+            this.enemyCamera = new Camera();
+
             this.updateCameraProjection();
         }
 
@@ -97,6 +106,75 @@ module JumperCube {
             return Promise.all(loadTextures);
         }
 
+        initScene() {
+            this.scene = new Jv.Games.WebGL.Scene(this.webgl);
+            this.scene.ambientLight = Color.Rgb(0.6, 0.6, 0.6);
+            this.scene.mainLight = new Jv.Games.WebGL.Materials.DirectionalLight(
+                Color.Rgb(0.55, 0.55, 0.5),
+                new Vector3(-0.85, 0.8, -0.75)
+            );
+
+            this.createMap();
+        }
+
+        initPlayer() {
+            this.player = this.scene.add(new JumperCube.Models.Mario(this.webgl.context, this.marioTexture));
+            this.player.add(Behaviors.Controller, {
+                minJumpForce: 2.0,
+                maxJumpForce: 4.91,
+                moveForce: 20,
+                camera: this.camera
+            });
+            this.player.transform.y = 15;
+        }
+
+        initEnemies() {
+            var goombas:Vector3[] = [
+                new Vector3(0, 0, 10),
+            ];
+            this.enemies = goombas.map(g => {
+                var goomba = this.scene.add(new JumperCube.Models.Goomba(this.webgl.context, this.goombaTexture));
+                goomba.transform.x = g.x;
+                goomba.transform.z = g.y;
+                goomba.transform.y = g.z + 0.6;
+                return goomba;
+            });
+        }
+
+        selectTargetEnemy() {
+            this.targetEnemy = this.enemies[Math.floor(Math.random() * this.enemies.length)];
+            this.showOnCamera(this.enemyCamera, this.targetEnemy);
+        }
+
+        initCamera(camera: Camera) {
+            camera.add(CoreComponents.RigidBody, {friction: new Vector3(1, 0, 1)});
+            camera.add(CoreComponents.AxisAlignedBoxCollider);
+
+            camera.add(JumperCube.Behaviors.Follow, {
+                target: undefined,
+                minDistance: 4,
+                maxDistance: 10,
+                speed: 5
+            });
+            camera.add(JumperCube.Behaviors.KeepAbove, {
+                target: undefined,
+                minDistance: 3,
+                maxDistance: 7,
+                speed: 1
+            });
+            camera.add(JumperCube.Behaviors.LookAtObject, {target: undefined});
+            this.scene.add(camera);
+        }
+
+        showOnCamera(camera: Camera, target: GameObject) {
+            camera.transform.position.z = target.globalTransform.position.z - 3;
+            camera.transform.position.y = target.globalTransform.position.y + 3;
+
+            camera.getComponent(JumperCube.Behaviors.Follow).target = target;
+            camera.getComponent(JumperCube.Behaviors.KeepAbove).target = target;
+            camera.getComponent(JumperCube.Behaviors.LookAtObject).target = target;
+        }
+
         init() {
             var materials: { materialProgram: Jv.Games.WebGL.Core.ShaderProgram; new (...args: any[]) }[]
                 = [Materials.TextureMaterial, Materials.VertexColorMaterial, Materials.TerrainMaterial, Materials.SolidColorMaterial];
@@ -107,61 +185,24 @@ module JumperCube {
                     Jv.Games.WebGL.MeterSize = 3;
                     Jv.Games.WebGL.Keyboard.init();
 
-                    this.scene = new Jv.Games.WebGL.Scene(this.webgl);
-                    this.scene.ambientLight = Color.Rgb(0.6, 0.6, 0.6);
-                    this.scene.mainLight = new Jv.Games.WebGL.Materials.DirectionalLight(
-                        Color.Rgb(0.55, 0.55, 0.5),
-                        new Vector3(-0.85, 0.8, -0.75)
-                    );
+                    this.initScene();
+                    this.initCamera(this.camera);
+                    this.initCamera(this.enemyCamera);
 
-                    var player = this.scene.add(new JumperCube.Models.Mario(this.webgl.context, this.marioTexture));
-                    player.add(Behaviors.Controller, {
-                        minJumpForce: 2.0,
-                        maxJumpForce: 4.91,
-                        moveForce: 20,
-                        camera: this.camera
-                    });
-                    player.transform.y = 15;
-                    player.transform.z = 55;
+                    this.initPlayer();
+                    this.initEnemies();
 
-                    var goombas:Vector3[] = [
-                        new Vector3(-20, 63, 0),
-                    ];
-                    goombas.forEach(g => {
-                        var goomba = this.scene.add(new JumperCube.Models.Goomba(this.webgl.context, this.goombaTexture));
-                        goomba.transform.x = g.x;
-                        goomba.transform.z = g.y;
-                        goomba.transform.y = g.z + 0.6;
-                    });
+                    this.showOnCamera(this.camera, this.player);
+                    this.showOnCamera(this.enemyCamera, this.player);
 
-                    this.scene.add(this.camera);
-                    this.camera.transform.position.z = player.globalTransform.position.z - 3;
-                    this.camera.transform.position.y = player.globalTransform.position.y - 3;
-
-                    this.camera.add(CoreComponents.RigidBody, {friction: new Vector3(1, 0, 1)});
-                    this.camera.add(CoreComponents.AxisAlignedBoxCollider);
-                    this.camera.add(JumperCube.Behaviors.Follow, {
-                        target: player,
-                        minDistance: 4,
-                        maxDistance: 10,
-                        speed: 5
-                    });
-                    this.camera.add(JumperCube.Behaviors.KeepAbove, {
-                        target: player,
-                        minDistance: 3,
-                        maxDistance: 7,
-                        speed: 1
-                    });
-                    this.camera.add(JumperCube.Behaviors.LookAtObject, {target: player});
-
-                    this.createMap();
+                    this.selectTargetEnemy();
 
                     this.scene.init();
                 });
         }
 
         createMap() {
-            this.addPlatform(this.grassTexture, 0, 40, -0.0001, 80, 80, 10, { xAlign: 0.5, zAlign: 0.5, yAlign: 0 });
+            this.scene.add(this.initTerrain(this.webgl.context, 100, 100));
         }
 
         createQuestionBlock(x: number, z: number, y: number, item?: GameObject) {
@@ -192,24 +233,6 @@ module JumperCube {
             return [0, 0, u, 0, u, v, 0, v];
         }
 
-        createStairZm(texture: Texture, x: number, z: number, y: number, w: number, d: number) {
-            for (var i = 0; i < d; i++) {
-                this.addPlatform(texture, x, z - i, y + i, w, d - i, 1);
-            }
-        }
-
-        createStairZ(texture: Texture, x: number, z: number, y: number, w: number, d: number) {
-            for (var i = 0; i < d; i++) {
-                this.addPlatform(texture, x, z, y + i, w, d - i, 1);
-            }
-        }
-
-        createStairX(texture: Texture, x: number, z: number, y: number, w: number, d: number) {
-            for (var i = 0; i < w; i++) {
-                this.addPlatform(texture, x, z, y + i, w - i, d, 1);
-            }
-        }
-
         static loadDefaults<Type>(current: Type, defaults: Type) {
             if (typeof current === "undefined")
                 return defaults;
@@ -221,53 +244,24 @@ module JumperCube {
             return current;
         }
 
-        createPlatform(context: WebGLRenderingContext, texture: Texture, x: number, z: number, y: number, w: number, d: number, h: number, args?: PlatformDefinition) {
-            args = Game.loadDefaults(args, { debug: false, xAlign: 0, yAlign: 1, zAlign: 0, collide: true });
+        initTerrain(context: WebGLRenderingContext, w: number, d: number) {
+            var terrainMaterial = new Materials.TerrainMaterial();
+            terrainMaterial.texture0 = this.textureGrass;
+            terrainMaterial.texture1 = this.goombaTexture;
+            terrainMaterial.texture2 = this.marioTexture;
+            terrainMaterial.texture3 = this.grassTexture;
+            terrainMaterial.specularPower = 32;
 
-            var xUV = this.createUV(texture, d, h);
-            var yUV = this.createUV(texture, w, d);
-            var zUV = this.createUV(texture, w, h);
+            var mesh = new Mesh.Terrain(context, imp.getImageData(this.heightmapTerrain.image), { smoothness: 1, width: w, depth: d, heightScale: 0.05 });
 
+            var terrain = new GameObject()
+                .add(MeshRenderer, {
+                    mesh: mesh,
+                    material: terrainMaterial
+                })
+                .add(Components.TerrainCollider, { radiusX: w / 2, radiusZ: d / 2, terrain: mesh });
 
-
-
-            var volcanoMaterial = new Materials.TerrainMaterial();
-            volcanoMaterial.texture0 = this.textureGrass;
-            volcanoMaterial.texture1 = this.goombaTexture;
-            volcanoMaterial.texture2 = this.marioTexture;
-            volcanoMaterial.texture3 = this.grassTexture;
-            volcanoMaterial.specularPower = 32;
-
-            var mesh = new Mesh.Terrain(this.webgl.context, imp.getImageData(this.heightmapVolcano.image), { smoothness: 1, width: w, depth: d, heightScale: 0.05 });
-
-            var platformMeshRenderer: {[x: string]: any} = {
-                mesh: mesh,
-                material: volcanoMaterial
-            };
-
-            var platform = new GameObject();
-
-            var align = platform.add(new GameObject())
-                .add(MeshRenderer, platformMeshRenderer);
-            if (args.collide)
-                align.add(Components.TerrainCollider, { radiusX: w / 2, radiusZ: d / 2, terrain: mesh });
-
-            align.transform.x = - w / 2 + w * args.xAlign;
-            align.transform.z = - d / 2 + d * args.zAlign;
-            align.transform.y = - h / 2 + h * args.yAlign;
-
-            platform.transform.x = x;
-            platform.transform.z = z;
-            platform.transform.y = y;
-
-            if (args.debug) {
-                platform.add(Behaviors.DebugPosition, { speed: new Vector3(w, h, d).length() * 0.1 });
-            }
-            return platform;
-        }
-
-        addPlatform(texture: Texture, x: number, z: number, y: number, w: number, d: number, h: number, args?: PlatformDefinition) {
-            this.scene.add(this.createPlatform(this.webgl.context, texture, x, z, y, w, d, h, args));
+            return terrain;
         }
 
         run() {
@@ -299,7 +293,16 @@ module JumperCube {
         }
 
         updateCameraProjection() {
-            this.camera.setPerspective(40, this.webgl.canvas.width / this.webgl.canvas.height, 1, 100)
+            var playerCameraWidth = 0.6;
+
+            var playerAspect = (this.webgl.canvas.width * playerCameraWidth) / this.webgl.canvas.height;
+            var enemyAspect = (this.webgl.canvas.width * (1 - playerCameraWidth)) / this.webgl.canvas.height;
+
+            this.camera.setPerspective(40, playerAspect, 1, 100);
+            this.enemyCamera.setPerspective(40, enemyAspect, 1, 100);
+
+            this.camera.viewport = new Jv.Games.WebGL.Viewport(0, 0, playerCameraWidth, 1);
+            this.enemyCamera.viewport = new Jv.Games.WebGL.Viewport(playerCameraWidth, 0, 1 - playerCameraWidth, 1);
         }
     }
 }

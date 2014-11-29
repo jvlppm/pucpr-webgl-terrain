@@ -65,8 +65,23 @@ module JumperCube.Mesh {
             x = x / this.xRatio + this.imgWidth / 2;
             z = z / this.zRatio + this.imgDepth / 2;
 
-            var posPy = ((Math.floor(x) + Math.floor(z) * this.imgWidth)*3)+1;
-            return this.data.vertices[posPy];
+            var minX = Math.floor(x);
+            var minZ = Math.floor(z);
+
+            var pos = (x: number, z: number) => ((x + z * this.imgWidth)*3)+1;
+            var h = (x: number, z: number) => this.data.vertices[pos(x, z)];
+
+            var minH = h(minX, minZ);
+
+            var hnx = h(minX + 1, minZ);
+            var hnz = h(minX, minZ + 1);
+
+            var rX = (x - minX);
+            var rZ = (z - minZ);
+
+            return minH + Math.max(
+                rX * (hnx - minH),
+                rZ * (hnz - minH));
         }
 
         //region Helpers

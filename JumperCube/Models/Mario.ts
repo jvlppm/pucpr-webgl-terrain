@@ -61,7 +61,7 @@ module JumperCube.Models {
 
             this._small = value;
 
-            var scale = value ? 0.5 : 0.8;
+            var scale = value ? 0.6 : 0.92;
             this.sizeContainer.transform = Jv.Games.WebGL.Matrix4.Scale(scale);
 
             var collider = this.searchComponent(Components.AxisAlignedBoxCollider);
