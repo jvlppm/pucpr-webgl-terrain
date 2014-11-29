@@ -37,11 +37,11 @@ module Jv.Games.WebGL.Core {
             this.context.uniformMatrix4fv(this.location, transpose, value.data);
         }
 
-        setTexture(value: Materials.Texture) {
+        setTexture(value: Materials.Texture, index = 0) {
             var gl = this.context;
-            gl.activeTexture(gl.TEXTURE0);
+            gl.activeTexture(gl.TEXTURE0 + index);
             gl.bindTexture(gl.TEXTURE_2D, value.texture);
-            gl.uniform1i(this.location, 0);
+            gl.uniform1i(this.location, 0 + index);
         }
     }
 }

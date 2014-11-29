@@ -18,30 +18,22 @@ module JumperCube.Materials {
             isClipping: boolean;
             clipPlane: Matrix4;
 
-            uTex0: Texture;
-            uTex1: Texture;
-            uTex2: Texture;
-            uTex3: Texture;
+            uTex0: (Uniform) => void;
+            uTex1: (Uniform) => void;
+            uTex2: (Uniform) => void;
+            uTex3: (Uniform) => void;
         };
         set texture0(value: Texture) {
-            if (typeof value === "undefined")
-                throw new Error("Texture cannot be undefined");
-            this.uniforms.uTex0 = value;
+            this.uniforms.uTex0 = (u) => u.setTexture(value, 0);
         }
         set texture1(value: Texture) {
-            if (typeof value === "undefined")
-                throw new Error("Texture cannot be undefined");
-            this.uniforms.uTex1 = value;
+            this.uniforms.uTex1 = (u) => u.setTexture(value, 1);
         }
         set texture2(value: Texture) {
-            if (typeof value === "undefined")
-                throw new Error("Texture cannot be undefined");
-            this.uniforms.uTex2 = value;
+            this.uniforms.uTex2 = (u) => u.setTexture(value, 2);
         }
         set texture3(value: Texture) {
-            if (typeof value === "undefined")
-                throw new Error("Texture cannot be undefined");
-            this.uniforms.uTex3 = value;
+            this.uniforms.uTex3 = (u) => u.setTexture(value, 3);
         }
         set ambient(value: Color) {
             this.uniforms.uAmbientMaterial = value;
@@ -61,18 +53,6 @@ module JumperCube.Materials {
         }
 
 
-        get texture0(): Texture {
-            return this.uniforms.uTex0;
-        }
-        get texture1(): Texture {
-            return this.uniforms.uTex1;
-        }
-        get texture2(): Texture {
-            return this.uniforms.uTex2;
-        }
-        get texture3(): Texture {
-            return this.uniforms.uTex3;
-        }
         get ambient() {
             return this.uniforms.uAmbientMaterial;
         }

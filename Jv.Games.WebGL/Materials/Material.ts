@@ -28,8 +28,15 @@ module Jv.Games.WebGL.Materials {
         setUniform(name: string, value: Matrix4);
         setUniform(name: string, value: Texture);
         setUniform(name: string, value: Vector3);
+        setUniform(name: string, value: (Uniform) => void);
         setUniform(name: string, value) {
             this.program.use();
+
+            if (typeof value === "function") {
+                value(this.program.getUniform(name));
+                return;
+            }
+
             if (value instanceof Matrix4) {
                 this.program.getUniform(name).setMatrix4(value);
                 return;

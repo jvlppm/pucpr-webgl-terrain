@@ -26,12 +26,12 @@ varying vec4 vTexWeight;
 varying float vDepth;
 varying float clip;
 
-void main(void)
+void main(void) 
 {
     if (isClipping && clip < 0.0) {
         discard;
     }
-
+    
     //Ajusta os parametros de entrada
     vec3 L = normalize(uLightDir);
     vec3 N = normalize(vNormal);
@@ -42,7 +42,7 @@ void main(void)
     //Calculo do componente difuso
     float Id = dot(N, -L);
     vec3 diffuse = Id * uDiffuseLight * uDiffuseMaterial;
-
+    
     //Calculo do componente especular
     float Is = 0.0;
     if (uSpecularPower > 0.0) {
@@ -57,21 +57,21 @@ void main(void)
     float blendDistance = 0.99;
     float blendWidth = 100.0;
     float blendFactor = clamp((vDepth - blendDistance) * blendWidth, 0.0, 1.0);
-
-    vec4 texelNear = texture2D(uTex0, vec2(vTexCoord.s * 50.0, vTexCoord.t * 50.0)) * vTexWeight.w +
+        
+    vec4 texelNear = texture2D(uTex0, vec2(vTexCoord.s * 50.0, vTexCoord.t * 50.0)) * vTexWeight.w + 
                      texture2D(uTex1, vec2(vTexCoord.s * 50.0, vTexCoord.t * 50.0)) * vTexWeight.z +
                      texture2D(uTex2, vec2(vTexCoord.s * 50.0, vTexCoord.t * 50.0)) * vTexWeight.y +
                      texture2D(uTex3, vec2(vTexCoord.s * 50.0, vTexCoord.t * 50.0)) * vTexWeight.x;
-
-    vec4 texelFar = texture2D(uTex0, vec2(vTexCoord.s * 10.0, vTexCoord.t  * 10.0)) * vTexWeight.w +
+                     
+    vec4 texelFar = texture2D(uTex0, vec2(vTexCoord.s * 10.0, vTexCoord.t  * 10.0)) * vTexWeight.w + 
                     texture2D(uTex1, vec2(vTexCoord.s * 10.0, vTexCoord.t  * 10.0)) * vTexWeight.z +
                     texture2D(uTex2, vec2(vTexCoord.s * 10.0, vTexCoord.t  * 10.0)) * vTexWeight.y +
                     texture2D(uTex3, vec2(vTexCoord.s * 10.0, vTexCoord.t  * 10.0)) * vTexWeight.x;
-
+                    
     vec3 texel = vec3(mix(texelNear, texelFar, blendFactor));
 
     //Combina os componentes para a cor final
-
+    
     vec3 color = clamp(texel * (ambient + diffuse) + specular, 0.0, 1.0);
 
     gl_FragColor = vec4(color, 1.0);

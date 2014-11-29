@@ -66,6 +66,9 @@ module JumperCube {
         itemMushroom: Texture;
         heightmapTerrain: Texture;
         textureGrass: Texture;
+        textureRock: Texture;
+        textureSand: Texture;
+        textureSnow: Texture;
 
         constructor(public webgl: WebGL) {
             this.textures = [
@@ -89,6 +92,9 @@ module JumperCube {
 
                 { url: "img/terrain/island.png", attribute: "heightmapTerrain" },
                 { url: "img/texture/grass.png", attribute: "textureGrass" },
+                { url: "img/texture/rock.png", attribute: "textureRock" },
+                { url: "img/texture/sand.png", attribute: "textureSand" },
+                { url: "img/texture/snow.png", attribute: "textureSnow" },
             ];
             this.camera = new Camera();
             this.enemyCamera = new Camera();
@@ -246,10 +252,10 @@ module JumperCube {
 
         initTerrain(context: WebGLRenderingContext, w: number, d: number) {
             var terrainMaterial = new Materials.TerrainMaterial();
-            terrainMaterial.texture0 = this.textureGrass;
-            terrainMaterial.texture1 = this.goombaTexture;
-            terrainMaterial.texture2 = this.marioTexture;
-            terrainMaterial.texture3 = this.grassTexture;
+            terrainMaterial.texture0 = this.textureSand;
+            terrainMaterial.texture1 = this.textureGrass;
+            terrainMaterial.texture2 = this.textureRock;
+            terrainMaterial.texture3 = this.textureSnow;
             terrainMaterial.specularPower = 32;
 
             var mesh = new Mesh.Terrain(context, imp.getImageData(this.heightmapTerrain.image), { smoothness: 1, width: w, depth: d, heightScale: 0.05 });
