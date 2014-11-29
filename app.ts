@@ -208,7 +208,13 @@ module JumperCube {
         }
 
         createMap() {
+            // Map terrain
             this.scene.add(this.initTerrain(this.webgl.context, 100, 100));
+
+            // Map Boundary
+            this.scene.add(new GameObject())
+                .add(Jv.Games.WebGL.Components.AxisAlignedBoxCollider, {
+                    radiusWidth: 45, radiusDepth: 45, radiusHeight: 50, inverse: true});
         }
 
         createQuestionBlock(x: number, z: number, y: number, item?: GameObject) {

@@ -20,15 +20,20 @@ module Jv.Games.WebGL.Components {
         radiusWidth = 0.5;
         radiusHeight = 0.5;
         radiusDepth = 0.5;
+        inverse: boolean;
 
         constructor(object: GameObject, args?: { [prop: string]: any }) {
             super(object, args);
+            this.inverse = false;
             super.loadArgs(args);
         }
 
         intersects(collider: Collider) {
-            if (collider instanceof AxisAlignedBoxCollider)
-                return this.intersectsWithAABB(<AxisAlignedBoxCollider>collider);
+            if (collider instanceof AxisAlignedBoxCollider) {
+                if (this.intersectsWithAABB(<AxisAlignedBoxCollider>collider))
+                    return this.inverse === (<AxisAlignedBoxCollider>collider).inverse;
+                return this.inverse !== (<AxisAlignedBoxCollider>collider).inverse;
+            }
             if (collider instanceof SphereCollider)
                 return this.intersectsWithSphere(<SphereCollider>collider);
         }
