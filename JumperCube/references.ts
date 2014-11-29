@@ -10,6 +10,7 @@
 ///<reference path="Behaviors/Controller.ts" />
 ///<reference path="Behaviors/DebugPosition.ts" />
 ///<reference path="Behaviors/DieOnTrigger.ts" />
+///<reference path="Behaviors/CameraFollow.ts" />
 ///<reference path="Behaviors/Follow.ts" />
 ///<reference path="Behaviors/HitOnTrigger.ts" />
 ///<reference path="Behaviors/KeepAbove.ts" />

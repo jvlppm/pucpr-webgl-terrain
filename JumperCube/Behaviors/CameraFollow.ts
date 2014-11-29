@@ -1,4 +1,4 @@
-///<reference path="../references.ts" />
+﻿///<reference path="../references.ts" />
 
 module JumperCube.Behaviors {
     import Keyboard = Jv.Games.WebGL.Keyboard;
@@ -8,7 +8,7 @@ module JumperCube.Behaviors {
     import Matrix4 = Jv.Games.WebGL.Matrix4;
     import RigidBody = Jv.Games.WebGL.Components.RigidBody;
 
-    export class Follow extends Component<Jv.Games.WebGL.GameObject> {
+    export class CameraFollow extends Component<Jv.Games.WebGL.Camera> {
         target: GameObject;
         targetPosition: Vector3;
         speed = 10;
@@ -17,43 +17,18 @@ module JumperCube.Behaviors {
         maxDistance = 10;
         viewDistance: number;
         rigidBody: RigidBody;
-        private lastRandomTargetTime: number;
-        private originalPosition: Vector3;
 
-        constructor(public object: Jv.Games.WebGL.GameObject, args) {
+        constructor(public object: Jv.Games.WebGL.Camera, args) {
             super(object);
             this.loadArgs(args);
             this.rigidBody = this.rigidBody || <RigidBody>object.searchComponent(RigidBody);
             this.rigidBody.maxSpeed = this.speed;
-            this.lastRandomTargetTime = 0;
         }
 
         update(deltaTime: number) {
-            if (typeof this.originalPosition === "undefined")
-                this.originalPosition = this.object.transform.position;
-
             var target;
             if(typeof this.target !== "undefined")
                 target = this.object.globalTransform.invert().multiply(this.target.globalTransform).position;
-
-            this.lastRandomTargetTime -= deltaTime;
-
-            if (typeof this.viewDistance === "number" || typeof target === "undefined") {
-                if (typeof target === "undefined" || target.length() > this.viewDistance) {
-                    var distFromOrig = this.object.transform.position.sub(this.originalPosition);
-                    if (distFromOrig.length() > (this.maxDistance + this.viewDistance) / 2) {
-                        this.lastRandomTargetTime = 1;
-                        this.targetPosition = new Vector3(-distFromOrig.x, 0, -distFromOrig.z);
-                    }
-                    if (this.lastRandomTargetTime <= 0) {
-                        this.lastRandomTargetTime = 1;
-                        this.targetPosition = new Vector3(Math.random() - 0.5, 0, Math.random() - 0.5);
-                    }
-                    if (this.targetPosition.x || this.targetPosition.y || this.targetPosition.z)
-                        this.rigidBody.push(this.targetPosition.normalize().scale(this.speed));
-                    return;
-                }
-            }
 
             this.targetPosition = target;
 
